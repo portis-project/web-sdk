@@ -1,0 +1,7 @@
+.vscode/*
+npm-debug.log
+.DS_Store
+Thumbs.db
+.db
+node_modules
+lerna-debug.log

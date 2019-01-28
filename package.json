@@ -1,0 +1,20 @@
+{
+  "name": "@portis/portis-sdk",
+  "description": "Portis SDK",
+  "scripts": {
+    "build": "lerna bootstrap && lerna run build",
+    "prepublish": "npm run build"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "husky": "1.2.1",
+    "lerna": "3.8.0",
+    "prettier": "1.15.3",
+    "pretty-quick": "1.8.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  }
+}

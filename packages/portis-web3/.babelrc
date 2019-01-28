@@ -1,0 +1,12 @@
+{
+  "presets": ["env"],
+  "plugins": [
+    "add-module-exports",
+    [
+      "transform-runtime",
+      {
+        "regenerator": true
+      }
+    ]
+  ]
+}
