@@ -4,7 +4,6 @@
   </a>
 </p>
 
-<hr>
 
 * ⚗️ [demo](https://codesandbox.io/s/3vm7kxmx5)
 * 📕 [docs](http://docs.portis.io)
