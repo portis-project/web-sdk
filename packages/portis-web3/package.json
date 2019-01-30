@@ -1,6 +1,6 @@
 {
   "name": "@portis/web3",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.4",
   "description": "Portis Web3 SDK",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -39,6 +39,6 @@
   "dependencies": {
     "ethereumjs-util": "5.2.0",
     "penpal": "3.0.7",
-    "web3-provider-engine": "git+https://git@github.com/radotzki/provider-engine.git"
+    "web3-provider-engine": "git+https://git@github.com/radotzki/provider-engine.git#c76828612ee64964b890b32d5d193e6b10ba1bc0"
   }
 }
