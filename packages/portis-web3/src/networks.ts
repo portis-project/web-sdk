@@ -21,13 +21,13 @@ export function networkAdapter(network: string | INetwork) {
 
 const networks: { [key: string]: INetwork } = {
   mainnet: {
-    nodeUrl: 'https://mainnet.infura.io/wfGZztijecfpS8N5yaOz',
+    nodeUrl: 'https://mainnet.infura.io/v3/faa4639b090f46499f29d894da0551a0',
   },
   ropsten: {
-    nodeUrl: 'https://ropsten.infura.io/wfGZztijecfpS8N5yaOz',
+    nodeUrl: 'https://ropsten.infura.io/v3/faa4639b090f46499f29d894da0551a0',
   },
   rinkeby: {
-    nodeUrl: 'https://rinkeby.infura.io/wfGZztijecfpS8N5yaOz',
+    nodeUrl: 'https://rinkeby.infura.io/v3/faa4639b090f46499f29d894da0551a0',
   },
   orchid: {
     nodeUrl: 'https://public-node.rsk.co',
@@ -36,13 +36,10 @@ const networks: { [key: string]: INetwork } = {
     nodeUrl: 'https://public-node.testnet.rsk.co',
   },
   kovan: {
-    nodeUrl: 'https://kovan.infura.io/wfGZztijecfpS8N5yaOz',
+    nodeUrl: 'https://kovan.infura.io/v3/faa4639b090f46499f29d894da0551a0',
   },
   classic: {
-    nodeUrl: 'https://web3.gastracker.io',
-  },
-  classicTestnet: {
-    nodeUrl: 'https://web3.gastracker.io/morden',
+    nodeUrl: 'https://ethereumclassic.network',
   },
   sokol: {
     nodeUrl: 'https://sokol.poa.network',
