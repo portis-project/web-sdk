@@ -18,7 +18,11 @@ export default () => [
       rules: [
         {
           test: /\.(js)$/,
-          exclude: /node_modules/,
+          include: [
+            path.resolve(__dirname, 'src'),
+            path.resolve(__dirname, 'node_modules/eth-block-tracker'),
+            path.resolve(__dirname, 'node_modules/@portis/web3-provider-engine')
+          ],
           use: 'babel-loader',
         },
       ],

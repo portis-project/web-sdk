@@ -1,6 +1,6 @@
 {
   "name": "@portis/web3",
-  "version": "2.0.0-beta.5",
+  "version": "2.0.0-beta.7",
   "description": "Portis Web3 SDK",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -13,7 +13,8 @@
     "build:es": "tsc --outDir es --module es2015",
     "build:umd": "webpack",
     "dts-bundle": "dts-bundle --name umd/index --main es --outputAsModuleFolder",
-    "insert-version": "node replace.js"
+    "insert-version": "node replace.js",
+    "prepublish": "npm run build"
   },
   "devDependencies": {
     "babel-core": "6.26.0",
@@ -39,6 +40,6 @@
   "dependencies": {
     "ethereumjs-util": "5.2.0",
     "penpal": "3.0.7",
-    "web3-provider-engine": "git+https://git@github.com/radotzki/provider-engine.git#c76828612ee64964b890b32d5d193e6b10ba1bc0"
+    "@portis/web3-provider-engine": "1.0.1"
   }
 }

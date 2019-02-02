@@ -7,7 +7,7 @@
     "newLine": "LF",
     "lib": ["dom", "es2017"],
     "moduleResolution": "node",
-    "importHelpers": true,
+    "importHelpers": false,
     "declaration": true,
     "pretty": true,
     "sourceMap": true,

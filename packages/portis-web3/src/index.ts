@@ -1,10 +1,10 @@
-import ProviderEngine from 'web3-provider-engine';
-import CacheSubprovider from 'web3-provider-engine/subproviders/cache.js';
-import FixtureSubprovider from 'web3-provider-engine/subproviders/fixture.js';
-import FilterSubprovider from 'web3-provider-engine/subproviders/filters.js';
-import HookedWalletSubprovider from 'web3-provider-engine/subproviders/hooked-wallet.js';
-import NonceSubprovider from 'web3-provider-engine/subproviders/nonce-tracker.js';
-import SubscriptionsSubprovider from 'web3-provider-engine/subproviders/subscriptions.js';
+import ProviderEngine from '@portis/web3-provider-engine';
+import CacheSubprovider from '@portis/web3-provider-engine/subproviders/cache.js';
+import FixtureSubprovider from '@portis/web3-provider-engine/subproviders/fixture.js';
+import FilterSubprovider from '@portis/web3-provider-engine/subproviders/filters.js';
+import HookedWalletSubprovider from '@portis/web3-provider-engine/subproviders/hooked-wallet.js';
+import NonceSubprovider from '@portis/web3-provider-engine/subproviders/nonce-tracker.js';
+import SubscriptionsSubprovider from '@portis/web3-provider-engine/subproviders/subscriptions.js';
 import Penpal, { AsyncMethodReturns } from 'penpal';
 import { networkAdapter } from './networks';
 import { ISDKConfig, IConnectionMethods, INetwork, IOptions } from './interfaces';
