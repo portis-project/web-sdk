@@ -13,6 +13,7 @@ export default () => [
       libraryTarget: 'umd',
       globalObject: 'this',
       library: 'Portis',
+      libraryExport: 'default',
     },
     module: {
       rules: [
