@@ -23,7 +23,8 @@ export default class Portis {
     widgetFrame: HTMLDivElement;
   }>;
   provider;
-  selectedAddress: string;
+  private _selectedAddress: string;
+  private _network: string;
   private _widgetUrl = widgetUrl;
   private _onLoginCallback: (walletAddress: string, email?: string) => void;
 
@@ -142,11 +143,15 @@ export default class Portis {
         let result: any = null;
         switch (payload.method) {
           case 'eth_accounts':
-            result = this.selectedAddress ? [this.selectedAddress] : [];
+            result = this._selectedAddress ? [this._selectedAddress] : [];
             break;
 
           case 'eth_coinbase':
-            result = this.selectedAddress ? [this.selectedAddress] : [];
+            result = this._selectedAddress ? [this._selectedAddress] : [];
+            break;
+
+          case 'net_version':
+            result = this._network;
             break;
 
           case 'eth_uninstallFilter':
@@ -190,7 +195,7 @@ export default class Portis {
           const widgetCommunication = (await this.widget).communication;
           const { error, result } = await widgetCommunication.getAccounts(this.config);
           if (!error && result) {
-            this.selectedAddress = result[0];
+            this._selectedAddress = result[0];
           }
           cb(error, result);
         },
@@ -232,6 +237,9 @@ export default class Portis {
       handleRequest: async (payload, next, end) => {
         const widgetCommunication = (await this.widget).communication;
         const { error, result } = await widgetCommunication.relay(payload, this.config);
+        if (payload.method === 'net_version') {
+          this._network = result;
+        }
         end(error, result);
       },
     });
@@ -246,6 +254,10 @@ export default class Portis {
           }
         });
       });
+
+    engine.isConnected = () => {
+      return true;
+    };
 
     engine.start();
     return engine;
