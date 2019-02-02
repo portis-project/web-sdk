@@ -282,6 +282,8 @@ export default class Portis {
       return true;
     };
 
+    engine.isPortis = true;
+
     engine.start();
     return engine;
   }
