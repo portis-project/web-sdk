@@ -10,12 +10,9 @@
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/portis-project/web-sdk/blob/master/LICENSE.txt)
 ![](https://img.shields.io/github/stars/portis-project/web-sdk.svg?style=flat)
 
-
 * ⚗️ [demo](https://codesandbox.io/s/3vm7kxmx5)
-* 📕 [docs](http://docs.portis.io)
+* 📕 [docs](https://docs.portis.io)
 * 💬 [chat](https://t.me/portisHQ)
-
-
 
 ## Quick Start
 
@@ -48,6 +45,8 @@ It should take no more than 5 minutes to get started with Portis 🚀
    ```
 
 1. You are good to go! 👍
+
+For more information see our 📕 [docs](https://docs.portis.io)
 
 ## License
 
