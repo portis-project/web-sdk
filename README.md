@@ -4,6 +4,12 @@
   </a>
 </p>
 
+![](https://img.shields.io/npm/v/@portis/web3.svg?colorB=blue&style=flat)
+![](https://img.shields.io/badge/chat-telegram-blue.svg)
+[![Twitter](https://img.shields.io/badge/twitter-portis-blue.svg?style=flat)](https://twitter.com/portis_io)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/portis-project/web-sdk/blob/master/LICENSE.txt)
+![](https://img.shields.io/github/stars/portis-project/web-sdk.svg?style=flat)
+
 
 * ⚗️ [demo](https://codesandbox.io/s/3vm7kxmx5)
 * 📕 [docs](http://docs.portis.io)
