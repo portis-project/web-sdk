@@ -46,7 +46,7 @@ It should take no more than 5 minutes to get started with Portis 🚀
 
 1. You are good to go! 👍
 
-For more information see our 📕 [docs](https://docs.portis.io)
+For more information see our [docs](https://docs.portis.io) 📕
 
 ## License
 
