@@ -50,4 +50,7 @@ const networks: { [key: string]: INetwork } = {
   xdai: {
     nodeUrl: 'https://dai.poa.network',
   },
+  goerli: {
+    nodeUrl: 'https://goerli.prylabs.net',
+  },
 };
