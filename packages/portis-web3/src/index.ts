@@ -11,6 +11,7 @@ import { ISDKConfig, IConnectionMethods, INetwork, IOptions } from './interfaces
 import { getTxGas } from './utils/getTxGas';
 import { Query } from './utils/query';
 import { styles } from './styles';
+import { validateSecureOrigin } from './utils/secureOrigin';
 
 const version = '$$PORTIS_SDK_VERSION$$';
 const widgetUrl = 'https://widget.portis.io';
@@ -29,6 +30,7 @@ export default class Portis {
   private _onLoginCallback: (walletAddress: string, email?: string) => void;
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
+    validateSecureOrigin();
     this._valiadateParams(dappId, network, options);
     this.config = { dappId, network: networkAdapter(network), version, scope: options.scope };
     this.widget = this._initWidget();
