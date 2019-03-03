@@ -4,6 +4,10 @@ export interface INetwork {
   nodeProtocol?: 'rpc' | 'pocket';
 }
 
+export interface IGasRelayOptions {
+  hubContractAddress: string;
+}
+
 export interface IConnectionMethods {
   getAccounts: (config: ISDKConfig) => Promise<{ error: string; result: string[] }>;
   signTransaction: (txParams: ITransactionRequest, config: ISDKConfig) => Promise<{ error: string; result: string }>;
@@ -19,12 +23,14 @@ export interface ISDKConfig {
   version: string;
   defaultEmail?: string;
   scope?: Scope[];
+  gasRelayHubContractAddress?: string;
 }
 
 export type Scope = 'email';
 
 export interface IOptions {
   scope?: Scope[];
+  gasRelay?: boolean | IGasRelayOptions;
 }
 
 export interface ITransactionRequest {
