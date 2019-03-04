@@ -15,12 +15,12 @@ export function networkAdapter(network: string | INetwork, gasRelay?: boolean) {
     );
   }
 
-  if (gasRelay && !networkObj.gasRelayHubContractAddress) {
+  if (gasRelay && !networkObj.gasRelayHubAddress) {
     throw new Error(`[Portis] can't find default gas relay hub for ${network}`);
   }
 
   if (typeof network === 'string' && !gasRelay) {
-    delete networkObj.gasRelayHubContractAddress;
+    delete networkObj.gasRelayHubAddress;
   }
 
   networkObj.nodeProtocol = networkObj.nodeProtocol || 'rpc';
@@ -37,7 +37,7 @@ const networks: { [key: string]: INetwork } = {
     nodeUrl: 'https://ropsten.infura.io/v3/faa4639b090f46499f29d894da0551a0',
     nodeProtocol: 'rpc',
     chainId: 3,
-    gasRelayHubContractAddress: '0x1349584869A1C7b8dc8AE0e93D8c15F5BB3B4B87',
+    gasRelayHubAddress: '0x1349584869A1C7b8dc8AE0e93D8c15F5BB3B4B87',
   },
   rinkeby: {
     nodeUrl: 'https://rinkeby.infura.io/v3/faa4639b090f46499f29d894da0551a0',
@@ -83,6 +83,6 @@ const networks: { [key: string]: INetwork } = {
     nodeUrl: 'https://dai.poa.network',
     nodeProtocol: 'rpc',
     chainId: 100,
-    gasRelayHubContractAddress: '0x49a984490a7762B0e5d775f0FfA608899Ebe2ee8',
+    gasRelayHubAddress: '0x49a984490a7762B0e5d775f0FfA608899Ebe2ee8',
   },
 };

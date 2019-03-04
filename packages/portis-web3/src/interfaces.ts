@@ -2,7 +2,7 @@ export interface INetwork {
   nodeUrl: string;
   chainId?: number;
   nodeProtocol?: 'rpc' | 'pocket';
-  gasRelayHubContractAddress?: string;
+  gasRelayHubAddress?: string;
 }
 
 export interface IConnectionMethods {
