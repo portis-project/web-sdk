@@ -2,6 +2,7 @@ export interface INetwork {
   nodeUrl: string;
   chainId?: number;
   nodeProtocol?: 'rpc' | 'pocket';
+  gasRelayHubAddress?: string;
 }
 
 export interface IConnectionMethods {
@@ -25,6 +26,7 @@ export type Scope = 'email';
 
 export interface IOptions {
   scope?: Scope[];
+  gasRelay?: boolean;
 }
 
 export interface ITransactionRequest {

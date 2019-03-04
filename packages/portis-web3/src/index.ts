@@ -32,13 +32,13 @@ export default class Portis {
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
     this._valiadateParams(dappId, network, options);
-    this.config = { dappId, network: networkAdapter(network), version, scope: options.scope };
+    this.config = { dappId, network: networkAdapter(network, options.gasRelay), version, scope: options.scope };
     this.widget = this._initWidget();
     this.provider = this._initProvider();
   }
 
-  changeNetwork(network: string | INetwork) {
-    this.config.network = networkAdapter(network);
+  changeNetwork(network: string | INetwork, gasRelay?: boolean) {
+    this.config.network = networkAdapter(network, gasRelay);
   }
 
   setDefaultEmail(email: string) {
