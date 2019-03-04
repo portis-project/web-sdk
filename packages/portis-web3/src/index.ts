@@ -7,7 +7,7 @@ import NonceSubprovider from '@portis/web3-provider-engine/subproviders/nonce-tr
 import SubscriptionsSubprovider from '@portis/web3-provider-engine/subproviders/subscriptions.js';
 import Penpal, { AsyncMethodReturns } from 'penpal';
 import { networkAdapter } from './networks';
-import { ISDKConfig, IConnectionMethods, INetwork, IOptions, IGasRelayOptions } from './interfaces';
+import { ISDKConfig, IConnectionMethods, INetwork, IOptions } from './interfaces';
 import { getTxGas } from './utils/getTxGas';
 import { Query } from './utils/query';
 import { styles } from './styles';
@@ -32,18 +32,15 @@ export default class Portis {
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
     this._valiadateParams(dappId, network, options);
-    const { selectedNetwork, gasRelayHubContractAddress } = this._getConfig(network, options.gasRelay);
-    this.config = { dappId, network: selectedNetwork, version, scope: options.scope, gasRelayHubContractAddress };
+    this.config = { dappId, network: networkAdapter(network, options.gasRelay), version, scope: options.scope };
     this.widget = this._initWidget();
     this.provider = this._initProvider();
   }
 
-  changeNetwork(network: string | INetwork, gasRelay?: boolean | IGasRelayOptions) {
-    const { selectedNetwork, gasRelayHubContractAddress } = this._getConfig(network, gasRelay);
-    this.config.network = selectedNetwork;
-    this.config.gasRelayHubContractAddress = gasRelayHubContractAddress;
+  changeNetwork(network: string | INetwork, gasRelay?: boolean) {
+    this.config.network = networkAdapter(network, gasRelay);
   }
-  
+
   setDefaultEmail(email: string) {
     this.config.defaultEmail = email;
   }
@@ -309,20 +306,5 @@ export default class Portis {
     if (this._onLoginCallback) {
       this._onLoginCallback(walletAddress, email);
     }
-  }
-
-  private _getConfig(confNetwork: string | INetwork, gasRelay?: boolean | IGasRelayOptions) : { selectedNetwork:INetwork, gasRelayHubContractAddress?: string } {
-    let selectedNetwork : INetwork;
-    let gasRelayHubContractAddress: string | undefined;
-    
-    if (typeof gasRelay === 'boolean') {
-      selectedNetwork = networkAdapter(confNetwork, gasRelay);
-      gasRelayHubContractAddress = selectedNetwork['gasRelayHubContractAddress'];
-    } else {
-      selectedNetwork = networkAdapter(confNetwork);
-      gasRelayHubContractAddress = gasRelay && gasRelay.hubContractAddress;
-    }
-
-    return { selectedNetwork, gasRelayHubContractAddress };
   }
 }

@@ -2,10 +2,7 @@ export interface INetwork {
   nodeUrl: string;
   chainId?: number;
   nodeProtocol?: 'rpc' | 'pocket';
-}
-
-export interface IGasRelayOptions {
-  hubContractAddress: string;
+  gasRelayHubContractAddress?: string;
 }
 
 export interface IConnectionMethods {
@@ -23,14 +20,13 @@ export interface ISDKConfig {
   version: string;
   defaultEmail?: string;
   scope?: Scope[];
-  gasRelayHubContractAddress?: string;
 }
 
 export type Scope = 'email';
 
 export interface IOptions {
   scope?: Scope[];
-  gasRelay?: boolean | IGasRelayOptions;
+  gasRelay?: boolean;
 }
 
 export interface ITransactionRequest {
