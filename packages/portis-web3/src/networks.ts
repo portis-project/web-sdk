@@ -44,6 +44,11 @@ const networks: { [key: string]: INetwork } = {
     nodeProtocol: 'rpc',
     chainId: 4,
   },
+  goerli: {
+    nodeUrl: 'https://goerli.prylabs.net',
+    nodeProtocol: 'rpc',
+    chainId: 5,
+  },
   orchid: {
     nodeUrl: 'https://public-node.rsk.co',
     nodeProtocol: 'rpc',
@@ -79,10 +84,5 @@ const networks: { [key: string]: INetwork } = {
     nodeProtocol: 'rpc',
     chainId: 100,
     gasRelayHubContractAddress: '0x49a984490a7762B0e5d775f0FfA608899Ebe2ee8',
-  },
-  goerli: {
-    nodeUrl: 'https://goerli.prylabs.net',
-    nodeProtocol: 'rpc',
-    chainId: 5,
   },
 };
