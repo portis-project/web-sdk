@@ -247,6 +247,12 @@ export default class Portis {
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
         },
+        signTypedMessageV3: async (msgParams, cb) => {
+          const widgetCommunication = (await this.widget).communication;
+          const params = Object.assign({}, msgParams, { messageStandard: 'signTypedMessageV3' });
+          const { error, result } = await widgetCommunication.signMessage(params, this.config);
+          cb(error, result);
+        },
         estimateGas: async (txParams, cb) => {
           const gas = await getTxGas(query, txParams);
           cb(null, gas);
