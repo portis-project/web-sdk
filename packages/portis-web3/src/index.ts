@@ -24,6 +24,7 @@ export default class Portis {
     widgetFrame: HTMLDivElement;
   }>;
   provider;
+  private noncesCache = {};
   private _selectedAddress: string;
   private _network: string;
   private _widgetUrl = widgetUrl;
@@ -38,7 +39,11 @@ export default class Portis {
   }
 
   changeNetwork(network: string | INetwork, gasRelay?: boolean) {
-    this.config.network = networkAdapter(network, gasRelay);
+    const newNetwork = networkAdapter(network, gasRelay);
+    const nonceSubprovider = this.provider._providers.find(subprovider => subprovider instanceof NonceSubprovider);
+    this.noncesCache[`${this.config.network.nodeUrl}:${this.config.network.chainId}`] = nonceSubprovider.nonceCache;
+    nonceSubprovider.nonceCache = this.noncesCache[`${newNetwork.nodeUrl}:${newNetwork.chainId}`] || {};
+    this.config.network = newNetwork;
   }
 
   setDefaultEmail(email: string) {
