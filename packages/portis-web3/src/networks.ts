@@ -79,6 +79,11 @@ const networks: { [key: string]: INetwork } = {
     nodeProtocol: 'rpc',
     chainId: 88,
   },
+    fuse: {
+    nodeUrl: 'https://rpc.fuse.io/',
+    nodeProtocol: 'rpc',
+    chainId: 1,
+  },
   core: {
     nodeUrl: 'https://core.poa.network',
     nodeProtocol: 'rpc',
