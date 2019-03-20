@@ -77,7 +77,7 @@ const networks: { [key: string]: INetwork } = {
   ubiq: {
     nodeUrl: 'https://rpc1.ubiqscan.io/',
     nodeProtocol: 'rpc',
-    chainId: 88,
+    chainId: 8,
   },
    fuse: {
     nodeUrl: 'https://rpc.fuse.io/',
