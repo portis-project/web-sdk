@@ -275,6 +275,7 @@ export default class Portis {
         const { error, result } = await widgetCommunication.relay(payload, this.config);
         if (payload.method === 'net_version') {
           this._network = result;
+          engine.networkVersion = this._network;
         }
         end(error, result);
       },
