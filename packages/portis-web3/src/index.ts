@@ -15,6 +15,7 @@ import { validateSecureOrigin } from './utils/secureOrigin';
 
 const version = '$$PORTIS_SDK_VERSION$$';
 const widgetUrl = 'https://widget.portis.io';
+const supportedScopes = ['email', 'reputation'];
 
 export default class Portis {
   config: ISDKConfig;
@@ -28,7 +29,7 @@ export default class Portis {
   private _selectedAddress: string;
   private _network: string;
   private _widgetUrl = widgetUrl;
-  private _onLoginCallback: (walletAddress: string, email?: string) => void;
+  private _onLoginCallback: (walletAddress: string, email?: string, reputation?: string) => void;
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
@@ -60,7 +61,7 @@ export default class Portis {
     return widgetCommunication.login(this.config);
   }
 
-  onLogin(callback: (walletAddress: string, email?: string) => void) {
+  onLogin(callback: (walletAddress: string, email?: string, reputation?: string) => void) {
     this._onLoginCallback = callback;
   }
 
@@ -82,7 +83,7 @@ export default class Portis {
         );
       }
 
-      const unknownScope = options.scope.filter(item => ['email'].indexOf(item) < 0);
+      const unknownScope = options.scope.filter(item => supportedScopes.indexOf(item) < 0);
       if (unknownScope.length > 0) {
         throw new Error(
           "[Portis] invalid 'scope' parameter. Read more about it here: https://docs.portis.io/#/configuration?id=scope",
@@ -314,9 +315,9 @@ export default class Portis {
     return { width, height };
   }
 
-  private _onLogin(walletAddress: string, email?: string) {
+  private _onLogin(walletAddress: string, email?: string, reputation?: string) {
     if (this._onLoginCallback) {
-      this._onLoginCallback(walletAddress, email);
+      this._onLoginCallback(walletAddress, email, reputation);
     }
   }
 }
