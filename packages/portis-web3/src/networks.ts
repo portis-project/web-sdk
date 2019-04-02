@@ -1,7 +1,7 @@
 import { INetwork } from './interfaces';
 
 export function networkAdapter(network: string | INetwork, gasRelay?: boolean) {
-  const networkObj = typeof network === 'string' ? networks[network] : network;
+  const networkObj = typeof network === 'string' ? Object.assign({}, networks[network]) : network;
 
   if (typeof networkObj !== 'object') {
     throw new Error(
