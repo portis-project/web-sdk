@@ -74,6 +74,16 @@ const networks: { [key: string]: INetwork } = {
     nodeProtocol: 'rpc',
     chainId: 77,
   },
+  ubiq: {
+    nodeUrl: 'https://rpc1.ubiqscan.io/',
+    nodeProtocol: 'rpc',
+    chainId: 8,
+  },
+   fuse: {
+    nodeUrl: 'https://rpc.fuse.io/',
+    nodeProtocol: 'rpc',
+    chainId: 121,
+  },
   core: {
     nodeUrl: 'https://core.poa.network',
     nodeProtocol: 'rpc',
