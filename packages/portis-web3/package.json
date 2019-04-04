@@ -1,6 +1,6 @@
 {
   "name": "@portis/web3",
-  "version": "2.0.0-beta.19",
+  "version": "2.0.0-beta.20",
   "description": "Portis Web3 SDK",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -21,6 +21,7 @@
     "babel-loader": "7.1.4",
     "babel-plugin-add-module-exports": "0.2.1",
     "babel-plugin-transform-runtime": "6.23.0",
+    "babel-polyfill": "6.26.0",
     "babel-preset-env": "1.6.1",
     "babel-register": "6.26.0",
     "dts-bundle": "0.7.3",
@@ -38,7 +39,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@portis/web3-provider-engine": "1.0.3",
+    "@portis/web3-provider-engine": "1.0.7",
     "ethereumjs-util": "5.2.0",
     "penpal": "3.0.7"
   }
