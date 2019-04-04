@@ -21,7 +21,6 @@ export default () => [
           test: /\.(js)$/,
           include: [
             path.resolve(__dirname, 'src'),
-            path.resolve(__dirname, 'node_modules/eth-block-tracker'),
             path.resolve(__dirname, 'node_modules/@portis/web3-provider-engine')
           ],
           use: 'babel-loader',

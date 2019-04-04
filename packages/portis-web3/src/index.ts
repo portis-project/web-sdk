@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import ProviderEngine from '@portis/web3-provider-engine';
 import CacheSubprovider from '@portis/web3-provider-engine/subproviders/cache.js';
 import FixtureSubprovider from '@portis/web3-provider-engine/subproviders/fixture.js';
