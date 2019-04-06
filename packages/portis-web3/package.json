@@ -1,6 +1,6 @@
 {
   "name": "@portis/web3",
-  "version": "2.0.0-beta.22",
+  "version": "2.0.0-beta.23",
   "description": "Portis Web3 SDK",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -37,7 +37,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@portis/web3-provider-engine": "1.0.8",
+    "@portis/web3-provider-engine": "1.0.9",
     "ethereumjs-util": "5.2.0",
     "penpal": "3.0.7"
   }
