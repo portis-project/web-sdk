@@ -263,8 +263,8 @@ export default class Portis {
           const gas = await getTxGas(query, txParams);
           cb(null, gas);
         },
-        gasPrice: async cb => {
-          cb(null, { result: '' });
+        getGasPrice: async cb => {
+          cb(null, '');
         },
       }),
     );
