@@ -34,7 +34,13 @@ export default class Portis {
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
     this._valiadateParams(dappId, network, options);
-    this.config = { dappId, network: networkAdapter(network, options.gasRelay), version, scope: options.scope };
+    this.config = {
+      dappId,
+      network: networkAdapter(network, options.gasRelay),
+      version,
+      scope: options.scope,
+      registerPageByDefault: options.registerPageByDefault,
+    };
     this.widget = this._initWidget();
     this.provider = this._initProvider();
   }
@@ -54,11 +60,6 @@ export default class Portis {
   async showPortis() {
     const widgetCommunication = (await this.widget).communication;
     return widgetCommunication.showPortis(this.config);
-  }
-
-  async login() {
-    const widgetCommunication = (await this.widget).communication;
-    return widgetCommunication.login(this.config);
   }
 
   onLogin(callback: (walletAddress: string, email?: string, reputation?: string) => void) {
@@ -89,6 +90,12 @@ export default class Portis {
           "[Portis] invalid 'scope' parameter. Read more about it here: https://docs.portis.io/#/configuration?id=scope",
         );
       }
+    }
+
+    if (options.registerPageByDefault !== undefined && typeof options.registerPageByDefault !== 'boolean') {
+      throw new Error(
+        "[Portis] invalid 'registerPageByDefault' parameter, must be a boolean. Read more about it here: https://docs.portis.io/#/configuration?id=registerPageByDefault",
+      );
     }
   }
 

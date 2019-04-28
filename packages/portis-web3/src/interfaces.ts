@@ -20,6 +20,7 @@ export interface ISDKConfig {
   version: string;
   defaultEmail?: string;
   scope?: Scope[];
+  registerPageByDefault?: boolean;
 }
 
 export type Scope = 'email';
@@ -27,6 +28,7 @@ export type Scope = 'email';
 export interface IOptions {
   scope?: Scope[];
   gasRelay?: boolean;
+  registerPageByDefault?: boolean;
 }
 
 export interface ITransactionRequest {
