@@ -12,7 +12,7 @@ export interface IConnectionMethods {
   relay: (payload: IPayload, config: ISDKConfig) => Promise<{ error: string; result: any }>;
   showPortis: (config: ISDKConfig) => Promise<void>;
   login: (config: ISDKConfig) => Promise<void>;
-  importWallet: (mnemonicOrPrivateKey: string, config: ISDKConfig) => Promise<void>;
+  importWallet: (mnemonicOrPrivateKey: string, config: ISDKConfig) => Promise<{ error: string; result: any }>;
 }
 
 export interface ISDKConfig {
