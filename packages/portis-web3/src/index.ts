@@ -65,6 +65,11 @@ export default class Portis {
     this._onLoginCallback = callback;
   }
 
+  async importWallet(mnemonicOrPrivateKey: string) {
+    const widgetCommunication = (await this.widget).communication;
+    return widgetCommunication.importWallet(mnemonicOrPrivateKey, this.config);
+  }
+
   private _valiadateParams(dappId: string, network: string | INetwork, options: IOptions) {
     if (!dappId) {
       throw new Error("[Portis] 'dappId' is required. Get your dappId here: https://dashboard.portis.io");
