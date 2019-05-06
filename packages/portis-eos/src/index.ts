@@ -5,7 +5,7 @@ import { styles } from './styles';
 import { networkAdapter } from './networks';
 
 const version = '$$PORTIS_SDK_VERSION$$';
-const widgetUrl = 'https://widget.portis.io';
+const widgetUrl = 'https://widget-eos.portis.io';
 
 export default class Portis {
   config: ISDKConfig;
