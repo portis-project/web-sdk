@@ -5,8 +5,7 @@ import { styles } from './styles';
 import { networkAdapter } from './networks';
 
 const version = '$$PORTIS_SDK_VERSION$$';
-// const widgetUrl = 'https://widget.portis.io';
-const widgetUrl = 'http://localhost:4700';
+const widgetUrl = 'https://widget.portis.io';
 
 export default class Portis {
   config: ISDKConfig;
@@ -16,7 +15,13 @@ export default class Portis {
     widgetFrame: HTMLDivElement;
   }>;
   private _widgetUrl = widgetUrl;
-  private _onLoginCallback: (walletAddress: string, email?: string, reputation?: string, accountName?: string) => void;
+  private _onLoginCallback: (
+    walletAddress: string,
+    email?: string,
+    reputation?: string,
+    accountName?: string,
+    accountPermission?: string,
+  ) => void;
 
   constructor(dappId: string, network: string, options: IOptions = {}) {
     validateSecureOrigin();
@@ -41,7 +46,15 @@ export default class Portis {
     return widgetCommunication.getAccounts(this.config);
   }
 
-  onLogin(callback: (walletAddress: string, email?: string, reputation?: string, accountName?: string) => void) {
+  onLogin(
+    callback: (
+      walletAddress: string,
+      email?: string,
+      reputation?: string,
+      accountName?: string,
+      accountPermission?: string,
+    ) => void,
+  ) {
     this._onLoginCallback = callback;
   }
 
@@ -123,9 +136,15 @@ export default class Portis {
     return { width, height };
   }
 
-  private _onLogin(walletAddress: string, email?: string, reputation?: string, accountName?: string) {
+  private _onLogin(
+    walletAddress: string,
+    email?: string,
+    reputation?: string,
+    accountName?: string,
+    accountPermission?: string,
+  ) {
     if (this._onLoginCallback) {
-      this._onLoginCallback(walletAddress, email, reputation, accountName);
+      this._onLoginCallback(walletAddress, email, reputation, accountName, accountPermission);
     }
   }
 }
