@@ -1,6 +1,6 @@
 export interface INetwork {
   nodeUrl: string;
-  chainId?: number;
+  chainId?: string;
   nodeProtocol?: 'rpc' | 'pocket';
   gasRelayHubAddress?: string;
 }

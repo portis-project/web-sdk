@@ -31,6 +31,6 @@ const networks: { [key: string]: INetwork } = {
   eos: {
     nodeUrl: 'http://jungle2.cryptolions.io',
     nodeProtocol: 'rpc',
-    chainId: 1,
+    chainId: '1',
   },
 };
