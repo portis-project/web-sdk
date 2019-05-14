@@ -90,16 +90,6 @@ const networks: { [key: string]: INetwork } = {
     chainId: 100,
     gasRelayHubAddress: '0x49a984490a7762B0e5d775f0FfA608899Ebe2ee8',
   },
-    thundercore:{
-    nodeUrl:'https://mainnet-rpc.thundercore.com',
-    nodeProtocol:'rpc',
-    chainId:108,
-  },
-  matic:{
-    nodeUrl:'https://testnet2.matic.network',
-    nodeProtocol:'rpc',
-    chainId:8995,
-  },
   fuse: {
     nodeUrl: 'https://rpc.fuse.io',
     nodeProtocol: 'rpc',
