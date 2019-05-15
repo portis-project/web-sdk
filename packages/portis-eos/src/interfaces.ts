@@ -1,3 +1,5 @@
+import { ApiInterfaces } from 'eosjs';
+
 export interface INetwork {
   nodeUrl: string;
   chainId?: string;
@@ -7,11 +9,12 @@ export interface INetwork {
 
 export interface IConnectionMethods {
   getAccounts: (config: ISDKConfig) => Promise<{ error: string; result: string[] }>;
-  signTransaction: (txParams: ITransactionRequest, config: ISDKConfig) => Promise<{ error: string; result: string }>;
-  signMessage: (msgParams: IMessageParams, config: ISDKConfig) => Promise<{ error: string; result: string }>;
+  signTransaction: (
+    txParams: ApiInterfaces.SignatureProviderArgs,
+    config: ISDKConfig,
+  ) => Promise<{ error: string; result: string[] }>;
   relay: (payload: IPayload, config: ISDKConfig) => Promise<{ error: string; result: any }>;
   showPortis: (config: ISDKConfig) => Promise<void>;
-  importWallet: (mnemonicOrPrivateKey: string, config: ISDKConfig) => Promise<void>;
 }
 
 export interface ISDKConfig {
@@ -29,29 +32,6 @@ export interface IOptions {
   scope?: Scope[];
   gasRelay?: boolean;
   registerPageByDefault?: boolean;
-}
-
-export interface ITransactionRequest {
-  to?: string;
-  from?: string;
-  nonce?: string;
-  gas?: string;
-  gasPrice?: string;
-  data?: string;
-  value?: string;
-  chainId?: number;
-}
-
-export interface IMessageParams {
-  from: string;
-  data: string | ITypedDataMessage[];
-  messageStandard: 'signMessage' | 'signPersonalMessage' | 'signTypedMessage';
-}
-
-export interface ITypedDataMessage {
-  name: string;
-  type: string;
-  value: string;
 }
 
 export interface IPayload {

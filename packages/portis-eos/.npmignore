@@ -1,0 +1,5 @@
+src/
+.babelrc
+webpack.config.babel.js
+replace.js
+tsconfig.json
