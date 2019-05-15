@@ -54,7 +54,7 @@ const networks: { [key: string]: INetwork } = {
     nodeProtocol: 'rpc',
     chainId: '8',
   },
-  thundertest: {
+  thundercoreTestnet: {
     nodeUrl: 'https://testnet-rpc.thundercore.com:8544',
     nodeProtocol: 'rpc',
     chainId: '18',
