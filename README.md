@@ -34,6 +34,43 @@ It should take no more than 5 minutes to get started with Portis 🚀
 
    const portis = new Portis('YOUR_DAPP_ID', 'mainnet');
    const web3 = new Web3(portis.provider);
+
+   // If you want to tap into the Pocket Network use this alternative provider instead
+   const web3 = new Web3(portis.pocketProvider);
+   ```
+
+1. Verify everything works by calling a web3 method such as getAccounts:
+
+   ```javascript
+   web3.eth.getAccounts((error, accounts) => {
+     console.log(accounts);
+   });
+   ```
+
+1. You are good to go! 👍
+
+For more information see our [docs](https://docs.portis.io) 📕
+
+## Quick Start using Pocket Network
+
+Pocket and Portis have partnered up to bring the power of decentralized infrastructure to your Portis apps.
+
+1. Register a DApp in the [Portis Dashboard](https://dashboard.portis.io), and copy your DApp ID.
+
+1. Install Portis and Web3
+
+   ```shell
+   npm install @portis/web3 web3
+   ```
+
+1. Import and initialize a web3 instance
+
+   ```javascript
+   import Portis from '@portis/web3';
+   import Web3 from 'web3';
+
+   const portis = new Portis('YOUR_DAPP_ID', 'mainnet');
+   const web3 = new Web3(portis.provider);
    ```
 
 1. Verify everything works by calling a web3 method such as getAccounts:

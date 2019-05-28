@@ -29,6 +29,7 @@ export interface IOptions {
   scope?: Scope[];
   gasRelay?: boolean;
   registerPageByDefault?: boolean;
+  pocketDevID?: string;
 }
 
 export interface ITransactionRequest {
