@@ -69,8 +69,10 @@ Pocket and Portis have partnered up to bring the power of decentralized infrastr
    import Portis from '@portis/web3';
    import Web3 from 'web3';
 
-   const portis = new Portis('YOUR_DAPP_ID', 'mainnet');
-   const web3 = new Web3(portis.provider);
+   const portis = new Portis('YOUR_DAPP_ID', 'mainnet', {
+     pocketDevID: 'YOUR_POCKET_DEV_ID_HERE'
+   });
+   const web3 = new Web3(portis.pocketProvider);
    ```
 
 1. Verify everything works by calling a web3 method such as getAccounts:
