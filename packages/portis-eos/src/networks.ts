@@ -29,7 +29,7 @@ export function networkAdapter(network: string | INetwork, gasRelay?: boolean) {
 
 const networks: { [key: string]: INetwork } = {
   eos: {
-    nodeUrl: 'api.eosdetroit.io',
+    nodeUrl: 'https://api.eosdetroit.io',
     nodeProtocol: 'rpc',
     chainId: 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906',
   },
