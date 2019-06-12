@@ -30,6 +30,7 @@ export default class Portis {
   private _network: string;
   private _widgetUrl = widgetUrl;
   private _onLoginCallback: (walletAddress: string, email?: string, reputation?: string) => void;
+  private _onLogoutCallback: () => void;
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
@@ -64,6 +65,10 @@ export default class Portis {
 
   onLogin(callback: (walletAddress: string, email?: string, reputation?: string) => void) {
     this._onLoginCallback = callback;
+  }
+
+  onLogout(callback: () => void) {
+    this._onLogoutCallback = callback;
   }
 
   async importWallet(mnemonicOrPrivateKey: string) {
@@ -132,6 +137,7 @@ export default class Portis {
             setHeight: this._setHeight.bind(this),
             getWindowSize: this._getWindowSize.bind(this),
             onLogin: this._onLogin.bind(this),
+            onLogout: this._onLogout.bind(this),
           },
         });
 
@@ -330,6 +336,12 @@ export default class Portis {
   private _onLogin(walletAddress: string, email?: string, reputation?: string) {
     if (this._onLoginCallback) {
       this._onLoginCallback(walletAddress, email, reputation);
+    }
+  }
+
+  private _onLogout() {
+    if (this._onLogoutCallback) {
+      this._onLogoutCallback();
     }
   }
 }
