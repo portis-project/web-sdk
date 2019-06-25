@@ -317,6 +317,14 @@ export default class Portis {
 
     engine.isPortis = true;
 
+    engine.on('error', error => {
+      if (error && error.message && error.message.includes('PollingBlockTracker')) {
+        console.warn('If you see this warning constantly, there might be an error with your RPC node.');
+      } else {
+        console.error(error);
+      }
+    });
+
     engine.start();
     return engine;
   }
