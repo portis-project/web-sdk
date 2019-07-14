@@ -1,7 +1,6 @@
 export interface INetwork {
   nodeUrl: string;
   chainId?: string;
-  nodeProtocol?: 'rpc' | 'pocket';
   gasRelayHubAddress?: string;
 }
 
@@ -29,7 +28,7 @@ export interface IOptions {
   scope?: Scope[];
   gasRelay?: boolean;
   registerPageByDefault?: boolean;
-  pocketDevID?: string;
+  pocketDevId?: string;
 }
 
 export interface ITransactionRequest {

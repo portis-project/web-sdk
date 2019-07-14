@@ -46,16 +46,15 @@ export default class Portis {
     };
     this.widget = this._initWidget();
 
-    // Setup pocket
-    if (options.pocketDevID) {
-      let pocket = new PocketJSCore.Pocket({
-        devID: options.pocketDevID,
+    if (!options.pocketDevId) {
+      this.provider = this._initProvider();
+    } else {
+      const pocket = new PocketJSCore.Pocket({
+        devID: options.pocketDevId,
         networkName: 'ETH',
-        netIDs: [this.config.network.chainId]
+        netIDs: [this.config.network.chainId],
       });
       this.pocketProvider = this._initProvider(pocket);
-    } else {
-      this.provider = this._initProvider();
     }
   }
 
@@ -225,7 +224,7 @@ export default class Portis {
         default:
           var message = `The Portis Web3 object does not support synchronous methods like ${
             payload.method
-            } without a callback parameter.`;
+          } without a callback parameter.`;
           throw new Error(message);
       }
 
@@ -300,26 +299,12 @@ export default class Portis {
       }),
     );
 
-    // Check the pocket provider flag and add the pocket provider
-    if (pocket) {
+    if (!pocket) {
       engine.addProvider({
         setEngine: _ => _,
         handleRequest: async (payload, next, end) => {
-          var response = await pocket.sendRelay(new PocketJSCore.Relay('ETH', this.config.network.chainId, JSON.stringify(payload), pocket.configuration));
-          var result;
-          var error;
-          if (result instanceof Error || !result) {
-            error = result || new Error('Unknown error');
-            result = null;
-          } else {
-            try {
-              result = JSON.parse(response).result;
-              error = null;
-            } catch(e) {
-              result = null;
-              error = e;
-            }
-          }
+          const widgetCommunication = (await this.widget).communication;
+          const { error, result } = await widgetCommunication.relay(payload, this.config);
           if (payload.method === 'net_version') {
             this._network = result;
             engine.networkVersion = this._network;
@@ -331,8 +316,23 @@ export default class Portis {
       engine.addProvider({
         setEngine: _ => _,
         handleRequest: async (payload, next, end) => {
-          const widgetCommunication = (await this.widget).communication;
-          const { error, result } = await widgetCommunication.relay(payload, this.config);
+          const response = await pocket.sendRelay(
+            new PocketJSCore.Relay('ETH', this.config.network.chainId, JSON.stringify(payload), pocket.configuration),
+          );
+          let result;
+          let error;
+          if (response instanceof Error || !response) {
+            error = response || new Error('Unknown error');
+            result = null;
+          } else {
+            try {
+              result = JSON.parse(response).result;
+              error = null;
+            } catch (e) {
+              result = null;
+              error = e;
+            }
+          }
           if (payload.method === 'net_version') {
             this._network = result;
             engine.networkVersion = this._network;
