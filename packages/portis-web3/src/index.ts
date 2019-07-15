@@ -12,6 +12,7 @@ import { getTxGas } from './utils/getTxGas';
 import { Query } from './utils/query';
 import { styles } from './styles';
 import { validateSecureOrigin } from './utils/secureOrigin';
+import PocketJSCore from 'pocket-js-core';
 
 const version = '$$PORTIS_SDK_VERSION$$';
 const widgetUrl = 'https://widget.portis.io';
@@ -25,6 +26,7 @@ export default class Portis {
     widgetFrame: HTMLDivElement;
   }>;
   provider;
+  pocketProvider;
   private noncesCache = {};
   private _selectedAddress: string;
   private _network: string;
@@ -43,7 +45,17 @@ export default class Portis {
       registerPageByDefault: options.registerPageByDefault,
     };
     this.widget = this._initWidget();
-    this.provider = this._initProvider();
+
+    if (!options.pocketDevId) {
+      this.provider = this._initProvider();
+    } else {
+      const pocket = new PocketJSCore.Pocket({
+        devID: options.pocketDevId,
+        networkName: 'ETH',
+        netIDs: [this.config.network.chainId],
+      });
+      this.pocketProvider = this._initProvider(pocket);
+    }
   }
 
   changeNetwork(network: string | INetwork, gasRelay?: boolean) {
@@ -158,7 +170,7 @@ export default class Portis {
     });
   }
 
-  private _initProvider() {
+  private _initProvider(pocket?: PocketJSCore.Pocket) {
     const engine = new ProviderEngine();
     const query = new Query(engine);
 
@@ -287,18 +299,48 @@ export default class Portis {
       }),
     );
 
-    engine.addProvider({
-      setEngine: _ => _,
-      handleRequest: async (payload, next, end) => {
-        const widgetCommunication = (await this.widget).communication;
-        const { error, result } = await widgetCommunication.relay(payload, this.config);
-        if (payload.method === 'net_version') {
-          this._network = result;
-          engine.networkVersion = this._network;
-        }
-        end(error, result);
-      },
-    });
+    if (!pocket) {
+      engine.addProvider({
+        setEngine: _ => _,
+        handleRequest: async (payload, next, end) => {
+          const widgetCommunication = (await this.widget).communication;
+          const { error, result } = await widgetCommunication.relay(payload, this.config);
+          if (payload.method === 'net_version') {
+            this._network = result;
+            engine.networkVersion = this._network;
+          }
+          end(error, result);
+        },
+      });
+    } else {
+      engine.addProvider({
+        setEngine: _ => _,
+        handleRequest: async (payload, next, end) => {
+          const response = await pocket.sendRelay(
+            new PocketJSCore.Relay('ETH', this.config.network.chainId, JSON.stringify(payload), pocket.configuration),
+          );
+          let result;
+          let error;
+          if (response instanceof Error || !response) {
+            error = response || new Error('Unknown error');
+            result = null;
+          } else {
+            try {
+              result = JSON.parse(response).result;
+              error = null;
+            } catch (e) {
+              result = null;
+              error = e;
+            }
+          }
+          if (payload.method === 'net_version') {
+            this._network = result;
+            engine.networkVersion = this._network;
+          }
+          end(error, result);
+        },
+      });
+    }
 
     engine.enable = () =>
       new Promise((resolve, reject) => {
