@@ -27,7 +27,6 @@ export default class Portis {
   }>;
   provider;
   pocketProvider;
-  private noncesCache = {};
   private _selectedAddress: string;
   private _network: string;
   private _widgetUrl = widgetUrl;
@@ -60,9 +59,8 @@ export default class Portis {
 
   changeNetwork(network: string | INetwork, gasRelay?: boolean) {
     const newNetwork = networkAdapter(network, gasRelay);
-    const nonceSubprovider = this.provider._providers.find(subprovider => subprovider instanceof NonceSubprovider);
-    this.noncesCache[`${this.config.network.nodeUrl}:${this.config.network.chainId}`] = nonceSubprovider.nonceCache;
-    nonceSubprovider.nonceCache = this.noncesCache[`${newNetwork.nodeUrl}:${newNetwork.chainId}`] || {};
+    this.clearSubprovider(NonceSubprovider);
+    this.clearSubprovider(CacheSubprovider);
     this.config.network = newNetwork;
   }
 
@@ -393,5 +391,11 @@ export default class Portis {
     if (this._onLogoutCallback) {
       this._onLogoutCallback();
     }
+  }
+
+  private clearSubprovider(subproviderType) {
+    const subprovider = this.provider._providers.find(subprovider => subprovider instanceof subproviderType);
+    this.provider.removeProvider(subprovider);
+    this.provider.addProvider(new subproviderType());
   }
 }
