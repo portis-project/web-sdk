@@ -26,7 +26,6 @@ export default class Portis {
     widgetFrame: HTMLDivElement;
   }>;
   provider;
-  pocketProvider;
   private _selectedAddress: string;
   private _network: string;
   private _widgetUrl = widgetUrl;
@@ -44,17 +43,7 @@ export default class Portis {
       registerPageByDefault: options.registerPageByDefault,
     };
     this.widget = this._initWidget();
-
-    if (!options.pocketDevId) {
-      this.provider = this._initProvider();
-    } else {
-      const pocket = new PocketJSCore.Pocket({
-        devID: options.pocketDevId,
-        networkName: 'ETH',
-        netIDs: [this.config.network.chainId],
-      });
-      this.pocketProvider = this._initProvider(pocket);
-    }
+    this.provider = this._initProvider(options);
   }
 
   changeNetwork(network: string | INetwork, gasRelay?: boolean) {
@@ -168,7 +157,7 @@ export default class Portis {
     });
   }
 
-  private _initProvider(pocket?: PocketJSCore.Pocket) {
+  private _initProvider(options: IOptions) {
     const engine = new ProviderEngine();
     const query = new Query(engine);
 
@@ -297,7 +286,7 @@ export default class Portis {
       }),
     );
 
-    if (!pocket) {
+    if (!options.pocketDevId) {
       engine.addProvider({
         setEngine: _ => _,
         handleRequest: async (payload, next, end) => {
@@ -311,6 +300,11 @@ export default class Portis {
         },
       });
     } else {
+      const pocket = new PocketJSCore.Pocket({
+        devID: options.pocketDevId,
+        networkName: 'ETH',
+        netIDs: [this.config.network.chainId],
+      });
       engine.addProvider({
         setEngine: _ => _,
         handleRequest: async (payload, next, end) => {
