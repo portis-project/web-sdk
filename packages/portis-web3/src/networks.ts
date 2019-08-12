@@ -39,6 +39,7 @@ const networks: { [key: string]: INetwork } = {
   rinkeby: {
     nodeUrl: 'https://rinkeby.infura.io/v3/faa4639b090f46499f29d894da0551a0',
     chainId: '4',
+    gasRelayHubAddress: '0x537f27a04470242ff6b2c3ad247a05248d0d27ce',
   },
   goerli: {
     nodeUrl: 'https://goerli.prylabs.net',
