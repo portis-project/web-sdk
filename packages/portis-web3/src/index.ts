@@ -47,7 +47,6 @@ export default class Portis {
   }
 
   changeNetwork(network: string | INetwork, gasRelay?: boolean) {
-    console.log('abba babayyyy');
     const newNetwork = networkAdapter(network, gasRelay);
     this.clearSubprovider(NonceSubprovider);
     this.clearSubprovider(CacheSubprovider);
