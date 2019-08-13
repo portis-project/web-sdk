@@ -47,6 +47,7 @@ export default class Portis {
   }
 
   changeNetwork(network: string | INetwork, gasRelay?: boolean) {
+    console.log('abba babayyyy');
     const newNetwork = networkAdapter(network, gasRelay);
     this.clearSubprovider(NonceSubprovider);
     this.clearSubprovider(CacheSubprovider);
@@ -60,6 +61,11 @@ export default class Portis {
   async showPortis() {
     const widgetCommunication = (await this.widget).communication;
     return widgetCommunication.showPortis(this.config);
+  }
+
+  async logout() {
+    const widgetCommunication = (await this.widget).communication;
+    return widgetCommunication.logout();
   }
 
   onLogin(callback: (walletAddress: string, email?: string, reputation?: string) => void) {
