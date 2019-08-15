@@ -75,6 +75,11 @@ export default class Portis {
     this._onLogoutCallback = callback;
   }
 
+  async getExtendedPublicKey() {
+    const widgetCommunication = (await this.widget).communication;
+    return widgetCommunication.getExtendedPublicKey(this.config);
+  }
+
   async importWallet(mnemonicOrPrivateKey: string) {
     const widgetCommunication = (await this.widget).communication;
     return widgetCommunication.importWallet(mnemonicOrPrivateKey, this.config);
