@@ -12,6 +12,7 @@ export interface IConnectionMethods {
   showPortis: (config: ISDKConfig) => Promise<void>;
   importWallet: (mnemonicOrPrivateKey: string, config: ISDKConfig) => Promise<void>;
   getExtendedPublicKey: (config: ISDKConfig) => Promise<{ error: string; result: string }>;
+  logout: () => Promise<{ error: string; result: boolean }>;
 }
 
 export interface ISDKConfig {
