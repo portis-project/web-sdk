@@ -64,7 +64,7 @@ export default class Portis {
 
   async logout() {
     const widgetCommunication = (await this.widget).communication;
-    return widgetCommunication.logout();
+    return widgetCommunication.logout(this.config);
   }
 
   onLogin(callback: (walletAddress: string, email?: string, reputation?: string) => void) {
