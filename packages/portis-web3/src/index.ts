@@ -246,6 +246,15 @@ export default class Portis {
     engine.addProvider(new SubscriptionsSubprovider());
     engine.addProvider(new FilterSubprovider());
     engine.addProvider(new NonceSubprovider());
+    engine.addProvider({
+      setEngine: _ => _,
+      handleRequest: async (payload, next, end) => {
+        if (!payload.id) {
+          payload.id = 42;
+        }
+        next();
+      },
+    });
 
     engine.addProvider(
       new HookedWalletSubprovider({
