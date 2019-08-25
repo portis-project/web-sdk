@@ -46,11 +46,13 @@ export default class Portis {
     this.provider = this._initProvider(options);
   }
 
-  changeNetwork(network: string | INetwork, gasRelay?: boolean) {
+  async changeNetwork(network: string | INetwork, gasRelay?: boolean) {
     const newNetwork = networkAdapter(network, gasRelay);
     this.clearSubprovider(NonceSubprovider);
     this.clearSubprovider(CacheSubprovider);
     this.config.network = newNetwork;
+    const widgetCommunication = (await this.widget).communication;
+    return widgetCommunication.onChangeNetwork(network, !!gasRelay);
   }
 
   setDefaultEmail(email: string) {
@@ -67,11 +69,15 @@ export default class Portis {
     return widgetCommunication.logout();
   }
 
-  onLogin(callback: (walletAddress: string, email?: string, reputation?: string) => void) {
+  async onLogin(callback: (walletAddress: string, email?: string, reputation?: string) => void) {
+    const widgetCommunication = (await this.widget).communication;
+    widgetCommunication.onLoginWasSet();
     this._onLoginCallback = callback;
   }
 
-  onLogout(callback: () => void) {
+  async onLogout(callback: () => void) {
+    const widgetCommunication = (await this.widget).communication;
+    widgetCommunication.onLogoutWasSet();
     this._onLogoutCallback = callback;
   }
 
