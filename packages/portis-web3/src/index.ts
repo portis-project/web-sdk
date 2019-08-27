@@ -52,7 +52,7 @@ export default class Portis {
     this.clearSubprovider(CacheSubprovider);
     this.config.network = newNetwork;
     const widgetCommunication = (await this.widget).communication;
-    return widgetCommunication.onChangeNetwork(this.config, network, !!gasRelay);
+    return widgetCommunication.onChangeNetwork(this.config, newNetwork);
   }
 
   setDefaultEmail(email: string) {
@@ -71,13 +71,13 @@ export default class Portis {
 
   async onLogin(callback: (walletAddress: string, email?: string, reputation?: string) => void) {
     const widgetCommunication = (await this.widget).communication;
-    widgetCommunication.onLoginWasSet(this.config);
+    widgetCommunication.initOnLogin(this.config);
     this._onLoginCallback = callback;
   }
 
   async onLogout(callback: () => void) {
     const widgetCommunication = (await this.widget).communication;
-    widgetCommunication.onLogoutWasSet(this.config);
+    widgetCommunication.initOnLogout(this.config);
     this._onLogoutCallback = callback;
   }
 

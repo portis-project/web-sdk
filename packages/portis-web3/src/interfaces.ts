@@ -13,9 +13,9 @@ export interface IConnectionMethods {
   importWallet: (mnemonicOrPrivateKey: string, config: ISDKConfig) => Promise<void>;
   getExtendedPublicKey: (config: ISDKConfig) => Promise<{ error: string; result: string }>;
   logout: () => Promise<{ error: string; result: boolean }>;
-  onLoginWasSet: (config: ISDKConfig) => Promise<void>;
-  onLogoutWasSet: (config: ISDKConfig) => Promise<void>;
-  onChangeNetwork: (config: ISDKConfig, network: INetwork | string, gasRelay: boolean) => Promise<void>;
+  initOnLogin: (config: ISDKConfig) => Promise<void>;
+  initOnLogout: (config: ISDKConfig) => Promise<void>;
+  onChangeNetwork: (config: ISDKConfig, network: INetwork) => Promise<void>;
 }
 
 export interface ISDKConfig {
