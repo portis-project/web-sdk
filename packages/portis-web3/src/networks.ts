@@ -40,7 +40,7 @@ const networks: { [key: string]: INetwork } = {
   rinkeby: {
     nodeUrl: 'https://rinkeby.infura.io/v3/faa4639b090f46499f29d894da0551a0',
     chainId: '4',
-    gasRelayHubAddress: '0x537f27a04470242ff6b2c3ad247a05248d0d27ce',
+    gasRelayHubAddress: '0xD216153c06E857cD7f72665E0aF1d7D82172F494',
   },
   goerli: {
     nodeUrl: 'https://goerli.prylabs.net',
@@ -87,10 +87,6 @@ const networks: { [key: string]: INetwork } = {
     nodeUrl: 'https://mainnet-rpc.thundercore.com',
     chainId: '108',
   },
-  matic: {
-    nodeUrl: 'https://testnet2.matic.network',
-    chainId: '8995',
-  },
   fuse: {
     nodeUrl: 'https://rpc.fuse.io',
     chainId: '121',
@@ -98,5 +94,13 @@ const networks: { [key: string]: INetwork } = {
   lightstreams: {
     nodeUrl: 'https://node.mainnet.lightstreams.io',
     chainId: '163',
+  },
+  maticAlpha: {
+    nodeUrl: 'https://alpha.ethereum.matic.network',
+    chainId: '4626',
+  },
+  maticTestnet: {
+    nodeUrl: 'https://testnet2.matic.network',
+    chainId: '8995',
   },
 };
