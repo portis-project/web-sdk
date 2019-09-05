@@ -401,6 +401,7 @@ export default class Portis {
   }
 
   private _onLogout() {
+    this._selectedAddress = '';
     if (this._onLogoutCallback) {
       this._onLogoutCallback();
     }
