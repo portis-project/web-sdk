@@ -35,7 +35,7 @@ const networks: { [key: string]: INetwork } = {
   ropsten: {
     nodeUrl: 'https://ropsten.infura.io/v3/faa4639b090f46499f29d894da0551a0',
     chainId: '3',
-    gasRelayHubAddress: '0x1349584869A1C7b8dc8AE0e93D8c15F5BB3B4B87',
+    gasRelayHubAddress: '0xD216153c06E857cD7f72665E0aF1d7D82172F494',
   },
   rinkeby: {
     nodeUrl: 'https://rinkeby.infura.io/v3/faa4639b090f46499f29d894da0551a0',
@@ -65,6 +65,7 @@ const networks: { [key: string]: INetwork } = {
   kovan: {
     nodeUrl: 'https://kovan.infura.io/v3/faa4639b090f46499f29d894da0551a0',
     chainId: '42',
+    gasRelayHubAddress: '0xD216153c06E857cD7f72665E0aF1d7D82172F494',
   },
   classic: {
     nodeUrl: 'https://ethereumclassic.network',
@@ -81,7 +82,7 @@ const networks: { [key: string]: INetwork } = {
   xdai: {
     nodeUrl: 'https://dai.poa.network',
     chainId: '100',
-    gasRelayHubAddress: '0x49a984490a7762B0e5d775f0FfA608899Ebe2ee8',
+    gasRelayHubAddress: '0xD216153c06E857cD7f72665E0aF1d7D82172F494',
   },
   thundercore: {
     nodeUrl: 'https://mainnet-rpc.thundercore.com',
