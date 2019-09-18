@@ -8,12 +8,13 @@
   "types": "umd/index.d.ts",
   "scripts": {
     "clean": "rimraf umd lib es",
-    "build": "npm run clean && npm run build:lib && npm run build:es && npm run insert-version && npm run build:umd && npm run dts-bundle",
+    "build": "npm run clean && npm run build:lib && npm run build:es && npm run insert-version && npm run build:umd && npm run dts-bundle && npm run print-integrity",
     "build:lib": "tsc --outDir lib --module commonjs",
     "build:es": "tsc --outDir es --module es2015",
     "build:umd": "webpack",
     "dts-bundle": "dts-bundle --name umd/index --main es --outputAsModuleFolder",
-    "insert-version": "node replace.js",
+    "insert-version": "node utils/replace.js",
+    "print-integrity": "node utils/integrity.js",
     "prepublish": "npm run build"
   },
   "devDependencies": {
