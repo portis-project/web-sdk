@@ -32,6 +32,7 @@ export default class Portis {
   private _onLoginCallback: (walletAddress: string, email?: string, reputation?: string) => void;
   private _onLogoutCallback: () => void;
   private _onActiveWalletChangedCallback: (walletAddress: string) => void;
+  private _onErrorCallback: (error: Error) => void;
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
@@ -78,6 +79,10 @@ export default class Portis {
 
   onActiveWalletChanged(callback: (walletAddress: string) => void) {
     this._onActiveWalletChangedCallback = callback;
+  }
+
+  onError(callback: (error: Error) => void) {
+    this._onErrorCallback = callback;
   }
 
   async getExtendedPublicKey(path: string = "m/44'/60'/0'/0/0") {
@@ -158,6 +163,7 @@ export default class Portis {
             onLogin: this._onLogin.bind(this),
             onLogout: this._onLogout.bind(this),
             onActiveWalletChanged: this._onActiveWalletChanged.bind(this),
+            onError: this._onError.bind(this),
           },
         });
 
@@ -421,6 +427,12 @@ export default class Portis {
   private _onActiveWalletChanged(walletAddress: string) {
     if (this._onActiveWalletChangedCallback) {
       this._onActiveWalletChangedCallback(walletAddress);
+    }
+  }
+
+  private _onError(error: Error) {
+    if (this._onErrorCallback) {
+      this._onErrorCallback(error);
     }
   }
 
