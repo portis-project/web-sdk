@@ -11,7 +11,7 @@ export interface IConnectionMethods {
   relay: (payload: IPayload, config: ISDKConfig) => Promise<{ error: string; result: any }>;
   showPortis: (config: ISDKConfig) => Promise<void>;
   importWallet: (mnemonicOrPrivateKey: string, config: ISDKConfig) => Promise<void>;
-  getExtendedPublicKey: (path: string, config: ISDKConfig) => Promise<{ error: string; result: string }>;
+  getExtendedPublicKey: (path: string, coin: string, config: ISDKConfig) => Promise<{ error: string; result: string }>;
   logout: () => Promise<{ error: string; result: boolean }>;
   isLoggedIn: () => Promise<{ error: string; result: boolean }>;
 }

@@ -85,9 +85,9 @@ export default class Portis {
     this._onErrorCallback = callback;
   }
 
-  async getExtendedPublicKey(path: string = "m/44'/60'/0'/0/0") {
+  async getExtendedPublicKey(path: string = "m/44'/60'/0'/0/0", coin: string = "Ethereum") {
     const widgetCommunication = (await this.widget).communication;
-    return widgetCommunication.getExtendedPublicKey(path, this.config);
+    return widgetCommunication.getExtendedPublicKey(path, coin, this.config);
   }
 
   async importWallet(mnemonicOrPrivateKey: string) {
