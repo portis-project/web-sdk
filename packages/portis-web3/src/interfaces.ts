@@ -14,6 +14,22 @@ export interface IConnectionMethods {
   getExtendedPublicKey: (path: string, coin: string, config: ISDKConfig) => Promise<{ error: string; result: string }>;
   logout: () => Promise<{ error: string; result: boolean }>;
   isLoggedIn: () => Promise<{ error: string; result: boolean }>;
+  signBitcoinTransaction: (
+    params: {
+      coin: string;
+      inputs: BTCSignTxInput[];
+      outputs: BTCSignTxOutput[];
+      version?: number;
+      locktime?: number;
+    },
+    config: ISDKConfig,
+  ) => Promise<{
+    error: string;
+    result: {
+      serializedTx: string;
+      txid: string;
+    };
+  }>;
 }
 
 export interface ISDKConfig {
@@ -63,3 +79,76 @@ export interface IPayload {
   method: string;
   params: any[];
 }
+
+export type BIP32Path = Array<number>;
+
+export interface BTCSignTxInput {
+  addressNList: BIP32Path;
+  scriptType?: BTCInputScriptType;
+  sequence?: number;
+  amount: string;
+  vout: number;
+  txid: string;
+  tx?: BitcoinTx;
+  hex: string;
+}
+
+export interface BTCSignTxOutput {
+  addressNList?: BIP32Path;
+  scriptType?: BTCOutputScriptType;
+  address?: string;
+  addressType: BTCOutputAddressType;
+  amount: string;
+  isChange: boolean;
+}
+
+export interface BitcoinTx {
+  version: number;
+  locktime: number;
+  vin: Array<BitcoinInput>;
+  vout: Array<BitcoinOutput>;
+}
+
+export interface BitcoinInput {
+  vout?: number;
+  valueSat?: number;
+  sequence?: number;
+  scriptSig?: BitcoinScriptSig;
+  txid?: string;
+  coinbase?: string;
+}
+
+export interface BitcoinOutput {
+  value: string;
+  scriptPubKey: BitcoinScriptSig;
+}
+
+export interface BitcoinScriptSig {
+  hex: string;
+}
+
+export interface BTCSignTxInput {
+  addressNList: BIP32Path;
+  scriptType?: BTCInputScriptType;
+  sequence?: number;
+  amount: string;
+  vout: number;
+  txid: string;
+  tx?: BitcoinTx;
+  hex: string;
+}
+
+export interface BTCSignTxOutput {
+  addressNList?: BIP32Path;
+  scriptType?: BTCOutputScriptType;
+  address?: string;
+  addressType: BTCOutputAddressType;
+  amount: string;
+  isChange: boolean;
+}
+
+export type BTCInputScriptType = 'p2pkh' | 'p2sh' | 'external' | 'p2wpkh' | 'p2sh-p2wpkh';
+
+export type BTCOutputScriptType = 'p2pkh' | 'p2sh' | 'p2wpkh' | 'p2sh-p2wpkh';
+
+export type BTCOutputAddressType = 'spend' | 'transfer' | 'change' | 'exchange';

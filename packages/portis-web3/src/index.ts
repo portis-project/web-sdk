@@ -7,7 +7,14 @@ import NonceSubprovider from '@portis/web3-provider-engine/subproviders/nonce-tr
 import SubscriptionsSubprovider from '@portis/web3-provider-engine/subproviders/subscriptions.js';
 import Penpal, { AsyncMethodReturns } from 'penpal';
 import { networkAdapter } from './networks';
-import { ISDKConfig, IConnectionMethods, INetwork, IOptions } from './interfaces';
+import {
+  ISDKConfig,
+  IConnectionMethods,
+  INetwork,
+  IOptions,
+  BTCSignTxInput,
+  BTCSignTxOutput,
+} from './interfaces';
 import { getTxGas } from './utils/getTxGas';
 import { Query } from './utils/query';
 import { styles } from './styles';
@@ -85,7 +92,7 @@ export default class Portis {
     this._onErrorCallback = callback;
   }
 
-  async getExtendedPublicKey(path: string = "m/44'/60'/0'/0/0", coin: string = "Ethereum") {
+  async getExtendedPublicKey(path: string = "m/44'/60'/0'/0/0", coin: string = 'Ethereum') {
     const widgetCommunication = (await this.widget).communication;
     return widgetCommunication.getExtendedPublicKey(path, coin, this.config);
   }
@@ -98,6 +105,17 @@ export default class Portis {
   async isLoggedIn() {
     const widgetCommunication = (await this.widget).communication;
     return widgetCommunication.isLoggedIn();
+  }
+
+  async signBitcoinTransaction(params: {
+    coin: string,
+    inputs: BTCSignTxInput[];
+    outputs: BTCSignTxOutput[];
+    locktime?: number;
+    version?: number;
+  }) {
+    const widgetCommunication = (await this.widget).communication;
+    return widgetCommunication.signBitcoinTransaction(params, this.config);
   }
 
   private _valiadateParams(dappId: string, network: string | INetwork, options: IOptions) {
