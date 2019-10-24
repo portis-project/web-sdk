@@ -89,8 +89,8 @@ const networks: { [key: string]: INetwork } = {
     chainId: '108',
   },
   fuse: {
-    nodeUrl: 'https://rpc.fuse.io',
-    chainId: '121',
+    nodeUrl: 'https://rpc.fusenet.io',
+    chainId: '122',
   },
   lightstreams: {
     nodeUrl: 'https://node.mainnet.lightstreams.io',
