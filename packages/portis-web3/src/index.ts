@@ -118,6 +118,11 @@ export default class Portis {
     return widgetCommunication.signBitcoinTransaction(params, this.config);
   }
 
+  async showBitcoinWallet(path: string = "m/49'/0'/0'/0/0") {
+    const widgetCommunication = (await this.widget).communication;
+    return widgetCommunication.showBitcoinWallet(path, this.config);
+  }
+
   private _valiadateParams(dappId: string, network: string | INetwork, options: IOptions) {
     if (!dappId) {
       throw new Error("[Portis] 'dappId' is required. Get your dappId here: https://dashboard.portis.io");

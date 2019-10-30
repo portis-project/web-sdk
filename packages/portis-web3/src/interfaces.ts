@@ -30,6 +30,7 @@ export interface IConnectionMethods {
       txid: string;
     };
   }>;
+  showBitcoinWallet: (path: string, config: ISDKConfig) => Promise<void>;
 }
 
 export interface ISDKConfig {
