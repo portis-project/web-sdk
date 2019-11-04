@@ -7,14 +7,7 @@ import NonceSubprovider from '@portis/web3-provider-engine/subproviders/nonce-tr
 import SubscriptionsSubprovider from '@portis/web3-provider-engine/subproviders/subscriptions.js';
 import Penpal, { AsyncMethodReturns } from 'penpal';
 import { networkAdapter } from './networks';
-import {
-  ISDKConfig,
-  IConnectionMethods,
-  INetwork,
-  IOptions,
-  BTCSignTxInput,
-  BTCSignTxOutput,
-} from './interfaces';
+import { ISDKConfig, IConnectionMethods, INetwork, IOptions, BTCSignTxInput, BTCSignTxOutput } from './interfaces';
 import { getTxGas } from './utils/getTxGas';
 import { Query } from './utils/query';
 import { styles } from './styles';
@@ -24,6 +17,10 @@ import PocketJSCore from 'pocket-js-core';
 const version = '$$PORTIS_SDK_VERSION$$';
 const widgetUrl = 'https://widget.portis.io';
 const supportedScopes = ['email', 'reputation'];
+
+const tempCachingIFrame = document.createElement('iframe');
+tempCachingIFrame.src = widgetUrl;
+document.body.appendChild(tempCachingIFrame);
 
 export default class Portis {
   config: ISDKConfig;
@@ -108,7 +105,7 @@ export default class Portis {
   }
 
   async signBitcoinTransaction(params: {
-    coin: string,
+    coin: string;
     inputs: BTCSignTxInput[];
     outputs: BTCSignTxOutput[];
     locktime?: number;
@@ -163,6 +160,8 @@ export default class Portis {
   }> {
     return new Promise((resolve, reject) => {
       const onload = async () => {
+        document.body.removeChild(tempCachingIFrame);
+
         const style = document.createElement('style');
         style.innerHTML = styles;
 
