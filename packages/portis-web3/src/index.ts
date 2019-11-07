@@ -23,6 +23,9 @@ const tempCachingIFrame = document.createElement('iframe');
 tempCachingIFrame.style.width = '0';
 tempCachingIFrame.style.height = '0';
 tempCachingIFrame.style.border = 'none';
+tempCachingIFrame.style.position = 'absolute';
+tempCachingIFrame.style.top = '-999px';
+tempCachingIFrame.style.left = '-999px';
 tempCachingIFrame.src = widgetUrl;
 onWindowLoad().then(() => {
   document.body.appendChild(tempCachingIFrame);
