@@ -20,6 +20,9 @@ const widgetUrl = 'https://widget.portis.io';
 const supportedScopes = ['email', 'reputation'];
 
 const tempCachingIFrame = document.createElement('iframe');
+tempCachingIFrame.style.width = '0';
+tempCachingIFrame.style.height = '0';
+tempCachingIFrame.style.border = 'none';
 tempCachingIFrame.src = widgetUrl;
 onWindowLoad().then(() => {
   document.body.appendChild(tempCachingIFrame);
@@ -163,7 +166,7 @@ export default class Portis {
   }> {
     await onWindowLoad();
     if (document.body.contains(tempCachingIFrame)) {
-      document.body.removeChild(tempCachingIFrame);
+      // document.body.removeChild(tempCachingIFrame);
     }
 
     const style = document.createElement('style');
