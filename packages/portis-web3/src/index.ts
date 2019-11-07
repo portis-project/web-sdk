@@ -10,6 +10,7 @@ import { networkAdapter } from './networks';
 import { ISDKConfig, IConnectionMethods, INetwork, IOptions, BTCSignTxInput, BTCSignTxOutput } from './interfaces';
 import { getTxGas } from './utils/getTxGas';
 import { Query } from './utils/query';
+import { onWindowLoad } from './utils/onWindowLoad';
 import { styles } from './styles';
 import { validateSecureOrigin } from './utils/secureOrigin';
 import PocketJSCore from 'pocket-js-core';
@@ -20,7 +21,9 @@ const supportedScopes = ['email', 'reputation'];
 
 const tempCachingIFrame = document.createElement('iframe');
 tempCachingIFrame.src = widgetUrl;
-document.body.appendChild(tempCachingIFrame);
+onWindowLoad().then(() => {
+  document.body.appendChild(tempCachingIFrame);
+});
 
 export default class Portis {
   config: ISDKConfig;
@@ -153,57 +156,50 @@ export default class Portis {
     }
   }
 
-  private _initWidget(): Promise<{
+  private async _initWidget(): Promise<{
     communication: AsyncMethodReturns<IConnectionMethods>;
     iframe: HTMLIFrameElement;
     widgetFrame: HTMLDivElement;
   }> {
-    return new Promise((resolve, reject) => {
-      const onload = async () => {
-        document.body.removeChild(tempCachingIFrame);
+    await onWindowLoad();
+    if (document.body.contains(tempCachingIFrame)) {
+      document.body.removeChild(tempCachingIFrame);
+    }
 
-        const style = document.createElement('style');
-        style.innerHTML = styles;
+    const style = document.createElement('style');
+    style.innerHTML = styles;
 
-        const container = document.createElement('div');
-        container.className = 'por_portis-container';
+    const container = document.createElement('div');
+    container.className = 'por_portis-container';
 
-        const widgetFrame = document.createElement('div');
-        widgetFrame.id = `portis-container-${Date.now()}`;
-        widgetFrame.className = 'por_portis-widget-frame';
+    const widgetFrame = document.createElement('div');
+    widgetFrame.id = `portis-container-${Date.now()}`;
+    widgetFrame.className = 'por_portis-widget-frame';
 
-        container.appendChild(widgetFrame);
-        document.body.appendChild(container);
-        document.head.appendChild(style);
+    container.appendChild(widgetFrame);
+    document.body.appendChild(container);
+    document.head.appendChild(style);
 
-        const connection = Penpal.connectToChild<IConnectionMethods>({
-          url: this._widgetUrl,
-          appendTo: document.getElementById(widgetFrame.id)!,
-          methods: {
-            setHeight: this._setHeight.bind(this),
-            getWindowSize: this._getWindowSize.bind(this),
-            onLogin: this._onLogin.bind(this),
-            onLogout: this._onLogout.bind(this),
-            onActiveWalletChanged: this._onActiveWalletChanged.bind(this),
-            onError: this._onError.bind(this),
-          },
-        });
-
-        connection.iframe.style.position = 'absolute';
-        connection.iframe.style.height = '100%';
-        connection.iframe.style.width = '100%';
-        connection.iframe.style.border = '0 transparent';
-
-        const communication = await connection.promise;
-        resolve({ communication, iframe: connection.iframe, widgetFrame });
-      };
-
-      if (['loaded', 'interactive', 'complete'].indexOf(document.readyState) > -1) {
-        onload();
-      } else {
-        window.addEventListener('load', onload.bind(this), false);
-      }
+    const connection = Penpal.connectToChild<IConnectionMethods>({
+      url: this._widgetUrl,
+      appendTo: document.getElementById(widgetFrame.id)!,
+      methods: {
+        setHeight: this._setHeight.bind(this),
+        getWindowSize: this._getWindowSize.bind(this),
+        onLogin: this._onLogin.bind(this),
+        onLogout: this._onLogout.bind(this),
+        onActiveWalletChanged: this._onActiveWalletChanged.bind(this),
+        onError: this._onError.bind(this),
+      },
     });
+
+    connection.iframe.style.position = 'absolute';
+    connection.iframe.style.height = '100%';
+    connection.iframe.style.width = '100%';
+    connection.iframe.style.border = '0 transparent';
+
+    const communication = await connection.promise;
+    return { communication, iframe: connection.iframe, widgetFrame };
   }
 
   private _initProvider(options: IOptions) {
