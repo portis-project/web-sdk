@@ -166,7 +166,7 @@ export default class Portis {
   }> {
     await onWindowLoad();
     if (document.body.contains(tempCachingIFrame)) {
-      // document.body.removeChild(tempCachingIFrame);
+      document.body.removeChild(tempCachingIFrame);
     }
 
     const style = document.createElement('style');
