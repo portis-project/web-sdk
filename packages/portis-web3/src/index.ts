@@ -15,9 +15,9 @@ import { styles } from './styles';
 import { validateSecureOrigin } from './utils/secureOrigin';
 import PocketJSCore from 'pocket-js-core';
 
-const version = '$$PORTIS_SDK_VERSION$$';
-const widgetUrl = 'https://widget.portis.io';
-const supportedScopes = ['email', 'reputation'];
+const VERSION = '$$PORTIS_SDK_VERSION$$';
+const WIDGET_URL = 'https://widget.portis.io';
+const SUPPORTED_SCOPES = ['email', 'reputation'];
 
 const tempCachingIFrame = document.createElement('iframe');
 tempCachingIFrame.style.width = '0';
@@ -26,7 +26,7 @@ tempCachingIFrame.style.border = 'none';
 tempCachingIFrame.style.position = 'absolute';
 tempCachingIFrame.style.top = '-999px';
 tempCachingIFrame.style.left = '-999px';
-tempCachingIFrame.src = widgetUrl;
+tempCachingIFrame.src = WIDGET_URL;
 onWindowLoad().then(() => {
   document.body.appendChild(tempCachingIFrame);
 });
@@ -41,7 +41,7 @@ export default class Portis {
   provider;
   private _selectedAddress: string;
   private _network: string;
-  private _widgetUrl = widgetUrl;
+  private _widgetUrl = WIDGET_URL;
   private _onLoginCallback: (walletAddress: string, email?: string, reputation?: string) => void;
   private _onLogoutCallback: () => void;
   private _onActiveWalletChangedCallback: (walletAddress: string) => void;
@@ -53,7 +53,7 @@ export default class Portis {
     this.config = {
       dappId,
       network: networkAdapter(network, options.gasRelay),
-      version,
+      version: VERSION,
       scope: options.scope,
       registerPageByDefault: options.registerPageByDefault,
     };
@@ -147,7 +147,7 @@ export default class Portis {
         );
       }
 
-      const unknownScope = options.scope.filter(item => supportedScopes.indexOf(item) < 0);
+      const unknownScope = options.scope.filter(item => SUPPORTED_SCOPES.indexOf(item) < 0);
       if (unknownScope.length > 0) {
         throw new Error(
           "[Portis] invalid 'scope' parameter. Read more about it here: https://docs.portis.io/#/configuration?id=scope",
@@ -205,6 +205,8 @@ export default class Portis {
     connection.iframe.style.border = '0 transparent';
 
     const communication = await connection.promise;
+    communication.retrieveSession(this.config);
+
     return { communication, iframe: connection.iframe, widgetFrame };
   }
 
