@@ -6,3 +6,4 @@ node_modules
 umd
 es
 lib
+*.code-workspace
