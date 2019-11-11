@@ -8,7 +8,7 @@ myShellScript.stdout.on('data', data => {
   console.log('Update packages/portis-docs/docs/installation.md');
   console.log('----------------------------------------------');
   console.log(`<script
-  src="https://cdn.jsdelivr.net/npm/@portis/web3@2.0.0-beta.${version}/umd/index.js"
+  src="https://cdn.jsdelivr.net/npm/@portis/web3@${version}/umd/index.js"
   integrity="sha256-${data}"
   crossorigin="anonymous"
 ></script>`);
