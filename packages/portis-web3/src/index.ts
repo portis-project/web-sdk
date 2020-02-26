@@ -1,5 +1,6 @@
 import ProviderEngine from '@portis/web3-provider-engine';
 import CacheSubprovider from '@portis/web3-provider-engine/subproviders/cache.js';
+import In3Subprovider from '@portis/web3-provider-engine/subproviders/in3.js';
 import FixtureSubprovider from '@portis/web3-provider-engine/subproviders/fixture.js';
 import FilterSubprovider from '@portis/web3-provider-engine/subproviders/filters.js';
 import HookedWalletSubprovider from '@portis/web3-provider-engine/subproviders/hooked-wallet.js';
@@ -52,7 +53,7 @@ export default class Portis {
     this._valiadateParams(dappId, network, options);
     this.config = {
       dappId,
-      network: networkAdapter(network, options.gasRelay),
+      network: networkAdapter(network, options.gasRelay, options.useIn3),
       version: VERSION,
       scope: options.scope,
       registerPageByDefault: options.registerPageByDefault,
@@ -61,10 +62,25 @@ export default class Portis {
     this.provider = this._initProvider(options);
   }
 
-  changeNetwork(network: string | INetwork, gasRelay?: boolean) {
-    const newNetwork = networkAdapter(network, gasRelay);
+  changeNetwork(network: string | INetwork, gasRelay?: boolean, useIn3?: boolean) {
+    const newNetwork = networkAdapter(network, gasRelay, useIn3);
     this.clearSubprovider(NonceSubprovider);
     this.clearSubprovider(CacheSubprovider);
+
+    const subprovider = this.provider._providers.find(subprovider => subprovider instanceof In3Subprovider);
+
+    //if a in3 provider was added then remove it.
+    if (subprovider) this.provider.removeProvider(subprovider);
+
+    //if user plans to useIn3 with the change then add the in3 Provider.
+    if (useIn3) {
+      const in3Config = Object.assign({}, newNetwork);
+      delete in3Config.nodeUrl;
+
+      //add the in3 subprovider to the engine
+      this.provider.addProvider(new In3Subprovider(in3Config));
+    }
+
     this.config.network = newNetwork;
   }
 
@@ -348,7 +364,13 @@ export default class Portis {
       }),
     );
 
-    if (!options.pocketDevId) {
+    if (options.useIn3) {
+      const in3Config = Object.assign({}, this.config.network);
+      delete in3Config.nodeUrl;
+
+      //add the in3 subprovider to the engine
+      engine.addProvider(new In3Subprovider(in3Config));
+    } else if (!options.pocketDevId && !options.useIn3) {
       engine.addProvider({
         setEngine: _ => _,
         handleRequest: async (payload, next, end) => {

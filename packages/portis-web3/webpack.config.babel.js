@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 export default () => [
   {
@@ -15,13 +16,14 @@ export default () => [
       library: 'Portis',
       libraryExport: 'default',
     },
+    plugins: [new webpack.SourceMapDevToolPlugin({})],
     module: {
       rules: [
         {
           test: /\.(js)$/,
           include: [
             path.resolve(__dirname, 'src'),
-            path.resolve(__dirname, 'node_modules/@portis/web3-provider-engine')
+            path.resolve(__dirname, 'node_modules/@portis/web3-provider-engine'),
           ],
           use: 'babel-loader',
         },
