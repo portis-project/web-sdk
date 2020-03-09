@@ -1,12 +1,28 @@
 import { INetwork } from './interfaces';
 
-export function networkAdapter(network: string | INetwork, gasRelay?: boolean) {
+const IN3_SUPPORTED_CHAINS = ['mainnet', 'kovan', 'goerli'];
+
+export function networkAdapter(network: string | INetwork, gasRelay?: boolean, useIn3?: boolean) {
   const networkObj = typeof network === 'string' ? Object.assign({}, networks[network]) : network;
 
   if (typeof networkObj !== 'object') {
     throw new Error(
       "[Portis] illegal 'network' parameter. Read more about it here: https://docs.portis.io/#/configuration?id=network",
     );
+  }
+
+  if (useIn3) {
+    if (!(networkObj.chainId && networkObj['requestCount'] && networkObj['minDeposit'])) {
+      throw new Error(
+        '[Portis-In3] a in3 config with chainId, requestCount and minDeposit is required. Some or all are missing',
+      );
+    } else if (!IN3_SUPPORTED_CHAINS.includes(networkObj.chainId)) {
+      throw new Error(
+        '[Portis-In3] Only mainnet, kovan and goerli are supported with In3. Specify chainId as ["kovan", "mainnet", "goerli"]',
+      );
+    } else {
+      networkObj.nodeUrl = networks[networkObj.chainId].nodeUrl;
+    }
   }
 
   if (!networkObj.nodeUrl) {
