@@ -50,6 +50,7 @@ export interface IOptions {
   gasRelay?: boolean;
   registerPageByDefault?: boolean;
   pocketDevId?: string;
+  staging?: boolean;
 }
 
 export interface ITransactionRequest {

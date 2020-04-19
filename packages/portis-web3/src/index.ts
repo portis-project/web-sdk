@@ -17,6 +17,7 @@ import PocketJSCore from 'pocket-js-core';
 
 const VERSION = '$$PORTIS_SDK_VERSION$$';
 const WIDGET_URL = 'https://widget.portis.io';
+const STAGING_WIDGET_URL = 'https://widget-staging.portis.io';
 const SUPPORTED_SCOPES = ['email', 'reputation'];
 
 const tempCachingIFrame = document.createElement('iframe');
@@ -49,7 +50,7 @@ export default class Portis {
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
-    this._valiadateParams(dappId, network, options);
+    this._validateParams(dappId, network, options);
     this.config = {
       dappId,
       network: networkAdapter(network, options.gasRelay),
@@ -129,7 +130,7 @@ export default class Portis {
     return widgetCommunication.showBitcoinWallet(path, this.config);
   }
 
-  private _valiadateParams(dappId: string, network: string | INetwork, options: IOptions) {
+  private _validateParams(dappId: string, network: string | INetwork, options: IOptions) {
     if (!dappId) {
       throw new Error("[Portis] 'dappId' is required. Get your dappId here: https://dashboard.portis.io");
     }
@@ -159,6 +160,11 @@ export default class Portis {
       throw new Error(
         "[Portis] invalid 'registerPageByDefault' parameter, must be a boolean. Read more about it here: https://docs.portis.io/#/configuration?id=registerPageByDefault",
       );
+    }
+
+    if (options.staging) {
+      console.warn('Please note: you are using the Portis STAGING environment.');
+      this._widgetUrl = STAGING_WIDGET_URL;
     }
   }
 
