@@ -19,8 +19,11 @@ const VERSION = '$$PORTIS_SDK_VERSION$$';
 const WIDGET_URL = 'https://widget.portis.io';
 const STAGING_WIDGET_URL = 'https://widget-staging.portis.io';
 const SUPPORTED_SCOPES = ['email', 'reputation'];
+const PORTIS_IFRAME_CLASS = 'por_portis-iframe';
+const PORTIS_CONTAINER_CLASS = 'por_portis-container';
 
 const tempCachingIFrame = document.createElement('iframe');
+tempCachingIFrame.className = PORTIS_IFRAME_CLASS;
 tempCachingIFrame.style.width = '0';
 tempCachingIFrame.style.height = '0';
 tempCachingIFrame.style.border = 'none';
@@ -29,6 +32,11 @@ tempCachingIFrame.style.top = '-999px';
 tempCachingIFrame.style.left = '-999px';
 tempCachingIFrame.src = WIDGET_URL;
 onWindowLoad().then(() => {
+  if (document.getElementsByClassName(PORTIS_IFRAME_CLASS).length) {
+    console.warn(
+      'Portis script was already loaded. This might cause unexpected behavior. If loading with a <script> tag, please make sure that you only load it once.',
+    );
+  }
   document.body.appendChild(tempCachingIFrame);
 });
 
@@ -50,6 +58,7 @@ export default class Portis {
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
+    this._checkIfWidgetAlreadyInitialized();
     this._validateParams(dappId, network, options);
     this.config = {
       dappId,
@@ -130,6 +139,14 @@ export default class Portis {
     return widgetCommunication.showBitcoinWallet(path, this.config);
   }
 
+  private _checkIfWidgetAlreadyInitialized() {
+    if (document.getElementsByClassName(PORTIS_CONTAINER_CLASS).length) {
+      console.warn(
+        'An instance of Portis was already initialized. This is probably a mistake. Make sure that you use the same Portis instance throughout your app.',
+      );
+    }
+  }
+
   private _validateParams(dappId: string, network: string | INetwork, options: IOptions) {
     if (!dappId) {
       throw new Error("[Portis] 'dappId' is required. Get your dappId here: https://dashboard.portis.io");
@@ -182,7 +199,7 @@ export default class Portis {
     style.innerHTML = styles;
 
     const container = document.createElement('div');
-    container.className = 'por_portis-container';
+    container.className = PORTIS_CONTAINER_CLASS;
 
     const widgetFrame = document.createElement('div');
     widgetFrame.id = `portis-container-${Date.now()}`;
