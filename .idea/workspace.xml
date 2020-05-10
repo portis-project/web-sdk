@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="121d3715-5760-4655-954e-d9565945dc23" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/packages/portis-eos/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/portis-eos/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/portis-web3/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/portis-web3/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/portis-web3/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/portis-web3/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/portis-web3/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/portis-web3/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/portis-web3/src/interfaces.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/portis-web3/src/interfaces.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1biX0gBp3H29XMiKp9vP4otQENu" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="ts.external.directory.path" value="$PROJECT_DIR$/packages/portis-web3/node_modules/typescript/lib" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="121d3715-5760-4655-954e-d9565945dc23" name="Default Changelist" comment="" />
+      <created>1589115665374</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1589115665374</updated>
+      <workItem from="1589115666898" duration="1776000" />
+      <workItem from="1589118366347" duration="3704000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1385" y="331" width="670" height="676" key="search.everywhere.popup" timestamp="1589118666135">
+      <screen x="0" y="0" width="3440" height="1440" />
+    </state>
+    <state x="1385" y="331" width="670" height="676" key="search.everywhere.popup/0.0.3440.1440@0.0.3440.1440" timestamp="1589118666135" />
+  </component>
+</project>

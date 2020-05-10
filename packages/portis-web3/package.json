@@ -38,6 +38,8 @@
   "license": "MIT",
   "dependencies": {
     "@portis/web3-provider-engine": "1.0.10",
+    "@pokt-network/pocket-js": "0.3.1-rc",
+    "@pokt-network/aat-js": "0.1.0-rc",
     "ethereumjs-util": "5.2.0",
     "penpal": "3.0.7"
   }

@@ -12,6 +12,10 @@ import { getTxGas } from './utils/getTxGas';
 import { Query } from './utils/query';
 import { styles } from './styles';
 import { validateSecureOrigin } from './utils/secureOrigin';
+import { Pocket, PocketAAT, typeGuard } from '@pokt-network/pocket-js';
+import { RpcError } from '@pokt-network/pocket-js/lib/src/rpc';
+import { RelayResponse } from '@pokt-network/pocket-js/lib/src/rpc/models';
+import { ConsensusNode } from '@pokt-network/pocket-js/lib/src/rpc/models/consensus-node';
 
 const version = '$$PORTIS_SDK_VERSION$$';
 const widgetUrl = 'https://widget.portis.io';
@@ -31,6 +35,8 @@ export default class Portis {
   private _widgetUrl = widgetUrl;
   private _onLoginCallback: (walletAddress: string, email?: string, reputation?: string) => void;
   private _onLogoutCallback: () => void;
+  private pocket?: Pocket = undefined;
+  private pocketAAT?: PocketAAT = undefined;
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
@@ -42,6 +48,18 @@ export default class Portis {
       scope: options.scope,
       registerPageByDefault: options.registerPageByDefault,
     };
+
+    if (this.config.network.nodeProtocol === 'pocket') {
+      if (options.pocketAAT === undefined) {
+        throw new Error(
+          "[Portis] illegal 'node protocol' parameter. In order to use the pocket network you need to provide a Pocket AAT object in the options",
+        );
+      }
+
+      this.pocketAAT = options.pocketAAT;
+      this.pocket = new Pocket([new URL(this.config.network.nodeUrl)]);
+    }
+
     this.widget = this._initWidget();
     this.provider = this._initProvider();
   }
@@ -287,18 +305,11 @@ export default class Portis {
       }),
     );
 
-    engine.addProvider({
-      setEngine: _ => _,
-      handleRequest: async (payload, next, end) => {
-        const widgetCommunication = (await this.widget).communication;
-        const { error, result } = await widgetCommunication.relay(payload, this.config);
-        if (payload.method === 'net_version') {
-          this._network = result;
-          engine.networkVersion = this._network;
-        }
-        end(error, result);
-      },
-    });
+    if (this.pocket === undefined) {
+      this.addRelayProvider(engine);
+    } else {
+      this.addPocketRelayProvider(engine);
+    }
 
     engine.enable = () =>
       new Promise((resolve, reject) => {
@@ -327,6 +338,72 @@ export default class Portis {
 
     engine.start();
     return engine;
+  }
+
+  private addRelayProvider(engine: ProviderEngine) {
+    engine.addProvider({
+      setEngine: _ => _,
+      handleRequest: async (payload, next, end) => {
+        const widgetCommunication = (await this.widget).communication;
+        const { error, result } = await widgetCommunication.relay(payload, this.config);
+        if (payload.method === 'net_version') {
+          this._network = result;
+          engine.networkVersion = this._network;
+        }
+        end(error, result);
+      },
+    });
+  }
+
+  private addPocketRelayProvider(engine: ProviderEngine) {
+    engine.addProvider({
+      setEngine: _ => _,
+      handleRequest: async (payload, next, end) => {
+        if (this.config.network.chainId === undefined) {
+          throw new Error(
+            "[Portis] 'chainId' is required. Read more about it here: https://docs.portis.io/#/configuration?id=network",
+          );
+        }
+
+        if (this.pocketAAT === undefined) {
+          throw new Error(
+            "[Portis] 'pocketAAT' is required. Read more about it here: https://docs.portis.io/#/configuration?id=network",
+          );
+        }
+
+        if (this.pocket === undefined) {
+          throw new Error(
+            "[Portis] 'Pocket' wasn't created it. Read more about it here: https://docs.portis.io/#/configuration?id=network",
+          );
+        }
+
+        let response = await this.pocket.sendRelay(
+          JSON.stringify(payload),
+          this.config.network.chainId,
+          this.pocketAAT,
+        );
+        let error;
+        let result;
+
+        switch (true) {
+          case typeGuard(response, RpcError):
+            error = response;
+            break;
+          case typeGuard(response, RelayResponse):
+            result = (response as RelayResponse).payload;
+            break;
+          default:
+            result = (response as ConsensusNode).relayResponse.payload;
+        }
+
+        if (payload.method === 'net_version') {
+          this._network = result;
+          engine.networkVersion = this._network;
+        }
+
+        end(error, result);
+      },
+    });
   }
 
   private async _setHeight(height: number) {

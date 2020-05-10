@@ -1,3 +1,5 @@
+import { PocketAAT } from '@pokt-network/aat-js';
+
 export interface INetwork {
   nodeUrl: string;
   chainId?: string;
@@ -29,6 +31,7 @@ export interface IOptions {
   scope?: Scope[];
   gasRelay?: boolean;
   registerPageByDefault?: boolean;
+  pocketAAT?: PocketAAT;
 }
 
 export interface ITransactionRequest {
