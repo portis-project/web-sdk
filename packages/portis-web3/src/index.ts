@@ -50,7 +50,7 @@ export default class Portis {
     };
 
     if (this.config.network.nodeProtocol === 'pocket') {
-      if (options.pocket === undefined || options.pocketAAT) {
+      if (options.pocket === undefined || options.pocketAAT === undefined) {
         throw new Error(
           "[Portis] illegal 'node protocol' parameter. In order to use the pocket network you need to provide a Pocket AAT object in the options",
         );
