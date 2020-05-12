@@ -1,4 +1,5 @@
 import { PocketAAT } from '@pokt-network/aat-js';
+import { Pocket } from '@pokt-network/pocket-js';
 
 export interface INetwork {
   nodeUrl: string;
@@ -31,6 +32,7 @@ export interface IOptions {
   scope?: Scope[];
   gasRelay?: boolean;
   registerPageByDefault?: boolean;
+  pocket?: Pocket;
   pocketAAT?: PocketAAT;
 }
 
