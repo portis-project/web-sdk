@@ -12,10 +12,7 @@ import { getTxGas } from './utils/getTxGas';
 import { Query } from './utils/query';
 import { styles } from './styles';
 import { validateSecureOrigin } from './utils/secureOrigin';
-import { Pocket, PocketAAT, typeGuard } from '@pokt-network/pocket-js';
-import { RpcError } from '@pokt-network/pocket-js/lib/src/rpc';
-import { RelayResponse } from '@pokt-network/pocket-js/lib/src/rpc/models';
-import { ConsensusNode } from '@pokt-network/pocket-js/lib/src/rpc/models/consensus-node';
+import { Pocket, PocketAAT, typeGuard, RpcError, RelayResponse, ConsensusNode } from '@pokt-network/pocket-js';
 
 const version = '$$PORTIS_SDK_VERSION$$';
 const widgetUrl = 'https://widget.portis.io';
