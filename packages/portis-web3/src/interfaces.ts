@@ -1,5 +1,4 @@
-import { PocketAAT } from '@pokt-network/aat-js';
-import { Pocket } from '@pokt-network/pocket-js';
+import { Pocket, PocketAAT } from '@pokt-network/web3-provider';
 
 export interface INetwork {
   nodeUrl: string;
@@ -34,6 +33,8 @@ export interface IOptions {
   registerPageByDefault?: boolean;
   pocket?: Pocket;
   pocketAAT?: PocketAAT;
+  accounts?: Array<string>;
+  privateKeys?: Array<string>;
 }
 
 export interface ITransactionRequest {
