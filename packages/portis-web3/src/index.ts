@@ -12,6 +12,7 @@ import { getTxGas } from './utils/getTxGas';
 import { Query } from './utils/query';
 import { styles } from './styles';
 import { validateSecureOrigin } from './utils/secureOrigin';
+import { Pocket, PocketAAT, PocketProvider, TransactionSigner, Transaction } from '@pokt-network/web3-provider';
 
 const version = '$$PORTIS_SDK_VERSION$$';
 const widgetUrl = 'https://widget.portis.io';
@@ -31,6 +32,9 @@ export default class Portis {
   private _widgetUrl = widgetUrl;
   private _onLoginCallback: (walletAddress: string, email?: string, reputation?: string) => void;
   private _onLogoutCallback: () => void;
+  private pocket?: Pocket = undefined;
+  private pocketAAT?: PocketAAT = undefined;
+  private txSigner?: TransactionSigner = undefined;
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
@@ -42,8 +46,54 @@ export default class Portis {
       scope: options.scope,
       registerPageByDefault: options.registerPageByDefault,
     };
+
+    if (this.config.network.nodeProtocol === 'pocket') {
+      if (
+        options.pocket === undefined ||
+        options.pocketAAT === undefined ||
+        options.accounts === undefined ||
+        options.privateKeys === undefined
+      ) {
+        throw new Error(
+          "[Portis] illegal 'node protocol' parameter. In order to use the pocket network you need to provide a Pocket AAT object an accounts object and a privateKeys in the options",
+        );
+      }
+
+      const ethTxSigner = {
+        hasAddress: async function(address: string) {
+          let accounts: Array<string> = options.accounts == undefined ? [] : options.accounts;
+          return accounts.includes(address.toUpperCase());
+        },
+        signTransaction: async function(txParams) {
+          try {
+            let privateKeys: Array<string> = options.privateKeys == undefined ? [] : options.privateKeys;
+            const pkString = privateKeys[0];
+            const privateKeyBuffer = Buffer.from(pkString, 'hex');
+            const tx = new Transaction(txParams, {
+              chain: this.chain,
+            });
+            tx.sign(privateKeyBuffer);
+            return '0x' + tx.serialize().toString('hex');
+          } catch (error) {
+            return error;
+          }
+        },
+      };
+
+      const ethTransactionSigner = new TransactionSigner(
+        options.accounts,
+        options.privateKeys,
+        ethTxSigner.hasAddress,
+        ethTxSigner.signTransaction,
+      );
+
+      this.pocketAAT = options.pocketAAT;
+      this.pocket = options.pocket;
+      this.txSigner = ethTransactionSigner;
+    }
+
     this.widget = this._initWidget();
-    this.provider = this._initProvider();
+    this.provider = this.pocket === undefined ? this._initProvider() : this._initPocketProvider();
   }
 
   changeNetwork(network: string | INetwork, gasRelay?: boolean) {
@@ -156,6 +206,11 @@ export default class Portis {
         window.addEventListener('load', onload.bind(this), false);
       }
     });
+  }
+
+  private _initPocketProvider() {
+    const provider = new PocketProvider(this.config.network.chainId, this.pocketAAT, this.pocket, this.txSigner);
+    return provider;
   }
 
   private _initProvider() {
