@@ -34,7 +34,7 @@ tempCachingIFrame.src = WIDGET_URL;
 onWindowLoad().then(() => {
   if (document.getElementsByClassName(PORTIS_IFRAME_CLASS).length) {
     console.warn(
-      'Portis script was already loaded. This might cause unexpected behavior. If loading with a <script> tag, please make sure that you only load it once.',
+      `Portis script was already loaded. This might cause unexpected behavior. If loading with a <script> tag, please make sure that you only load it once.`,
     );
   }
   document.body.appendChild(tempCachingIFrame);
@@ -71,13 +71,8 @@ export default class Portis {
       registerPageByDefault: options.registerPageByDefault,
     };
 
-    if (this.config.network.nodeProtocol === 'pocket') {
-      if (
-        options.pocket === undefined ||
-        options.pocketAAT === undefined ||
-        options.accounts === undefined ||
-        options.privateKeys === undefined
-      ) {
+    if (options.pocket !== undefined) {
+      if (options.pocketAAT === undefined || options.accounts === undefined || options.privateKeys === undefined) {
         throw new Error(
           "[Portis] illegal 'node protocol' parameter. In order to use the Pocket Network you need to provide a Pocket AAT object an accounts object and a privateKeys in the options",
         );
@@ -117,7 +112,7 @@ export default class Portis {
     }
 
     this.widget = this._initWidget();
-    this.provider = this._pocket === undefined ? this._initProvider() : this._initPocketProvider();
+    this.provider = this._pocket === undefined ? this._initProvider(options) : this._initPocketProvider();
   }
 
   changeNetwork(network: string | INetwork, gasRelay?: boolean) {
