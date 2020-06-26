@@ -3,7 +3,6 @@ import { Pocket, PocketAAT } from '@pokt-network/web3-provider';
 export interface INetwork {
   nodeUrl: string;
   chainId?: string;
-  nodeProtocol?: 'rpc' | 'pocket';
   gasRelayHubAddress?: string;
 }
 
@@ -14,6 +13,27 @@ export interface IConnectionMethods {
   relay: (payload: IPayload, config: ISDKConfig) => Promise<{ error: string; result: any }>;
   showPortis: (config: ISDKConfig) => Promise<void>;
   importWallet: (mnemonicOrPrivateKey: string, config: ISDKConfig) => Promise<void>;
+  getExtendedPublicKey: (path: string, coin: string, config: ISDKConfig) => Promise<{ error: string; result: string }>;
+  logout: () => Promise<{ error: string; result: boolean }>;
+  isLoggedIn: () => Promise<{ error: string; result: boolean }>;
+  signBitcoinTransaction: (
+    params: {
+      coin: string;
+      inputs: BTCSignTxInput[];
+      outputs: BTCSignTxOutput[];
+      version?: number;
+      locktime?: number;
+    },
+    config: ISDKConfig,
+  ) => Promise<{
+    error: string;
+    result: {
+      serializedTx: string;
+      txid: string;
+    };
+  }>;
+  showBitcoinWallet: (path: string, config: ISDKConfig) => Promise<void>;
+  retrieveSession: (config: ISDKConfig) => Promise<void>;
 }
 
 export interface ISDKConfig {
@@ -31,6 +51,7 @@ export interface IOptions {
   scope?: Scope[];
   gasRelay?: boolean;
   registerPageByDefault?: boolean;
+  staging?: boolean;
   pocket?: Pocket;
   pocketAAT?: PocketAAT;
   accounts?: Array<string>;
@@ -66,3 +87,76 @@ export interface IPayload {
   method: string;
   params: any[];
 }
+
+export type BIP32Path = Array<number>;
+
+export interface BTCSignTxInput {
+  addressNList: BIP32Path;
+  scriptType?: BTCInputScriptType;
+  sequence?: number;
+  amount: string;
+  vout: number;
+  txid: string;
+  tx?: BitcoinTx;
+  hex: string;
+}
+
+export interface BTCSignTxOutput {
+  addressNList?: BIP32Path;
+  scriptType?: BTCOutputScriptType;
+  address?: string;
+  addressType: BTCOutputAddressType;
+  amount: string;
+  isChange: boolean;
+}
+
+export interface BitcoinTx {
+  version: number;
+  locktime: number;
+  vin: Array<BitcoinInput>;
+  vout: Array<BitcoinOutput>;
+}
+
+export interface BitcoinInput {
+  vout?: number;
+  valueSat?: number;
+  sequence?: number;
+  scriptSig?: BitcoinScriptSig;
+  txid?: string;
+  coinbase?: string;
+}
+
+export interface BitcoinOutput {
+  value: string;
+  scriptPubKey: BitcoinScriptSig;
+}
+
+export interface BitcoinScriptSig {
+  hex: string;
+}
+
+export interface BTCSignTxInput {
+  addressNList: BIP32Path;
+  scriptType?: BTCInputScriptType;
+  sequence?: number;
+  amount: string;
+  vout: number;
+  txid: string;
+  tx?: BitcoinTx;
+  hex: string;
+}
+
+export interface BTCSignTxOutput {
+  addressNList?: BIP32Path;
+  scriptType?: BTCOutputScriptType;
+  address?: string;
+  addressType: BTCOutputAddressType;
+  amount: string;
+  isChange: boolean;
+}
+
+export type BTCInputScriptType = 'p2pkh' | 'p2sh' | 'external' | 'p2wpkh' | 'p2sh-p2wpkh';
+
+export type BTCOutputScriptType = 'p2pkh' | 'p2sh' | 'p2wpkh' | 'p2sh-p2wpkh';
+
+export type BTCOutputAddressType = 'spend' | 'transfer' | 'change' | 'exchange';

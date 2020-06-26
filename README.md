@@ -10,7 +10,7 @@
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/portis-project/web-sdk/blob/master/LICENSE.txt)
 ![](https://img.shields.io/github/stars/portis-project/web-sdk.svg?style=flat)
 
-* ⚗️ [demo](https://codesandbox.io/s/3vm7kxmx5)
+* ⚗️ [demo](https://codesandbox.io/s/l9mn6o89qm)
 * 📕 [docs](https://docs.portis.io)
 * 💬 [chat](https://t.me/portisHQ)
 

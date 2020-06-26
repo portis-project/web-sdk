@@ -7,16 +7,38 @@ import NonceSubprovider from '@portis/web3-provider-engine/subproviders/nonce-tr
 import SubscriptionsSubprovider from '@portis/web3-provider-engine/subproviders/subscriptions.js';
 import Penpal, { AsyncMethodReturns } from 'penpal';
 import { networkAdapter } from './networks';
-import { ISDKConfig, IConnectionMethods, INetwork, IOptions } from './interfaces';
+import { ISDKConfig, IConnectionMethods, INetwork, IOptions, BTCSignTxInput, BTCSignTxOutput } from './interfaces';
 import { getTxGas } from './utils/getTxGas';
 import { Query } from './utils/query';
+import { onWindowLoad } from './utils/onWindowLoad';
 import { styles } from './styles';
 import { validateSecureOrigin } from './utils/secureOrigin';
 import { Pocket, PocketAAT, PocketProvider, TransactionSigner, Transaction } from '@pokt-network/web3-provider';
 
-const version = '$$PORTIS_SDK_VERSION$$';
-const widgetUrl = 'https://widget.portis.io';
-const supportedScopes = ['email', 'reputation'];
+const VERSION = '$$PORTIS_SDK_VERSION$$';
+const WIDGET_URL = 'https://widget.portis.io';
+const STAGING_WIDGET_URL = 'https://widget-staging.portis.io';
+const SUPPORTED_SCOPES = ['email', 'reputation'];
+const PORTIS_IFRAME_CLASS = 'por_portis-iframe';
+const PORTIS_CONTAINER_CLASS = 'por_portis-container';
+
+const tempCachingIFrame = document.createElement('iframe');
+tempCachingIFrame.className = PORTIS_IFRAME_CLASS;
+tempCachingIFrame.style.width = '0';
+tempCachingIFrame.style.height = '0';
+tempCachingIFrame.style.border = 'none';
+tempCachingIFrame.style.position = 'absolute';
+tempCachingIFrame.style.top = '-999px';
+tempCachingIFrame.style.left = '-999px';
+tempCachingIFrame.src = WIDGET_URL;
+onWindowLoad().then(() => {
+  if (document.getElementsByClassName(PORTIS_IFRAME_CLASS).length) {
+    console.warn(
+      'Portis script was already loaded. This might cause unexpected behavior. If loading with a <script> tag, please make sure that you only load it once.',
+    );
+  }
+  document.body.appendChild(tempCachingIFrame);
+});
 
 export default class Portis {
   config: ISDKConfig;
@@ -26,23 +48,25 @@ export default class Portis {
     widgetFrame: HTMLDivElement;
   }>;
   provider;
-  private noncesCache = {};
   private _selectedAddress: string;
   private _network: string;
-  private _widgetUrl = widgetUrl;
+  private _widgetUrl = WIDGET_URL;
   private _onLoginCallback: (walletAddress: string, email?: string, reputation?: string) => void;
   private _onLogoutCallback: () => void;
-  private pocket?: Pocket = undefined;
-  private pocketAAT?: PocketAAT = undefined;
-  private txSigner?: TransactionSigner = undefined;
+  private _onActiveWalletChangedCallback: (walletAddress: string) => void;
+  private _onErrorCallback: (error: Error) => void;
+  private _pocket?: Pocket = undefined;
+  private _pocketAAT?: PocketAAT = undefined;
+  private _txSigner?: TransactionSigner = undefined;
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
-    this._valiadateParams(dappId, network, options);
+    this._checkIfWidgetAlreadyInitialized();
+    this._validateParams(dappId, network, options);
     this.config = {
       dappId,
       network: networkAdapter(network, options.gasRelay),
-      version,
+      version: VERSION,
       scope: options.scope,
       registerPageByDefault: options.registerPageByDefault,
     };
@@ -55,7 +79,7 @@ export default class Portis {
         options.privateKeys === undefined
       ) {
         throw new Error(
-          "[Portis] illegal 'node protocol' parameter. In order to use the pocket network you need to provide a Pocket AAT object an accounts object and a privateKeys in the options",
+          "[Portis] illegal 'node protocol' parameter. In order to use the Pocket Network you need to provide a Pocket AAT object an accounts object and a privateKeys in the options",
         );
       }
 
@@ -87,20 +111,19 @@ export default class Portis {
         ethTxSigner.signTransaction,
       );
 
-      this.pocketAAT = options.pocketAAT;
-      this.pocket = options.pocket;
-      this.txSigner = ethTransactionSigner;
+      this._pocketAAT = options.pocketAAT;
+      this._pocket = options.pocket;
+      this._txSigner = ethTransactionSigner;
     }
 
     this.widget = this._initWidget();
-    this.provider = this.pocket === undefined ? this._initProvider() : this._initPocketProvider();
+    this.provider = this._pocket === undefined ? this._initProvider() : this._initPocketProvider();
   }
 
   changeNetwork(network: string | INetwork, gasRelay?: boolean) {
     const newNetwork = networkAdapter(network, gasRelay);
-    const nonceSubprovider = this.provider._providers.find(subprovider => subprovider instanceof NonceSubprovider);
-    this.noncesCache[`${this.config.network.nodeUrl}:${this.config.network.chainId}`] = nonceSubprovider.nonceCache;
-    nonceSubprovider.nonceCache = this.noncesCache[`${newNetwork.nodeUrl}:${newNetwork.chainId}`] || {};
+    this.clearSubprovider(NonceSubprovider);
+    this.clearSubprovider(CacheSubprovider);
     this.config.network = newNetwork;
   }
 
@@ -113,6 +136,11 @@ export default class Portis {
     return widgetCommunication.showPortis(this.config);
   }
 
+  async logout() {
+    const widgetCommunication = (await this.widget).communication;
+    return widgetCommunication.logout();
+  }
+
   onLogin(callback: (walletAddress: string, email?: string, reputation?: string) => void) {
     this._onLoginCallback = callback;
   }
@@ -121,12 +149,54 @@ export default class Portis {
     this._onLogoutCallback = callback;
   }
 
+  onActiveWalletChanged(callback: (walletAddress: string) => void) {
+    this._onActiveWalletChangedCallback = callback;
+  }
+
+  onError(callback: (error: Error) => void) {
+    this._onErrorCallback = callback;
+  }
+
+  async getExtendedPublicKey(path: string = "m/44'/60'/0'/0/0", coin: string = 'Ethereum') {
+    const widgetCommunication = (await this.widget).communication;
+    return widgetCommunication.getExtendedPublicKey(path, coin, this.config);
+  }
+
   async importWallet(mnemonicOrPrivateKey: string) {
     const widgetCommunication = (await this.widget).communication;
     return widgetCommunication.importWallet(mnemonicOrPrivateKey, this.config);
   }
 
-  private _valiadateParams(dappId: string, network: string | INetwork, options: IOptions) {
+  async isLoggedIn() {
+    const widgetCommunication = (await this.widget).communication;
+    return widgetCommunication.isLoggedIn();
+  }
+
+  async signBitcoinTransaction(params: {
+    coin: string;
+    inputs: BTCSignTxInput[];
+    outputs: BTCSignTxOutput[];
+    locktime?: number;
+    version?: number;
+  }) {
+    const widgetCommunication = (await this.widget).communication;
+    return widgetCommunication.signBitcoinTransaction(params, this.config);
+  }
+
+  async showBitcoinWallet(path: string = "m/49'/0'/0'/0/0") {
+    const widgetCommunication = (await this.widget).communication;
+    return widgetCommunication.showBitcoinWallet(path, this.config);
+  }
+
+  private _checkIfWidgetAlreadyInitialized() {
+    if (document.getElementsByClassName(PORTIS_CONTAINER_CLASS).length) {
+      console.warn(
+        'An instance of Portis was already initialized. This is probably a mistake. Make sure that you use the same Portis instance throughout your app.',
+      );
+    }
+  }
+
+  private _validateParams(dappId: string, network: string | INetwork, options: IOptions) {
     if (!dappId) {
       throw new Error("[Portis] 'dappId' is required. Get your dappId here: https://dashboard.portis.io");
     }
@@ -144,7 +214,7 @@ export default class Portis {
         );
       }
 
-      const unknownScope = options.scope.filter(item => supportedScopes.indexOf(item) < 0);
+      const unknownScope = options.scope.filter(item => SUPPORTED_SCOPES.indexOf(item) < 0);
       if (unknownScope.length > 0) {
         throw new Error(
           "[Portis] invalid 'scope' parameter. Read more about it here: https://docs.portis.io/#/configuration?id=scope",
@@ -157,63 +227,67 @@ export default class Portis {
         "[Portis] invalid 'registerPageByDefault' parameter, must be a boolean. Read more about it here: https://docs.portis.io/#/configuration?id=registerPageByDefault",
       );
     }
+
+    if (options.staging) {
+      console.warn('Please note: you are using the Portis STAGING environment.');
+      this._widgetUrl = STAGING_WIDGET_URL;
+    }
   }
 
-  private _initWidget(): Promise<{
+  private async _initWidget(): Promise<{
     communication: AsyncMethodReturns<IConnectionMethods>;
     iframe: HTMLIFrameElement;
     widgetFrame: HTMLDivElement;
   }> {
-    return new Promise((resolve, reject) => {
-      const onload = async () => {
-        const style = document.createElement('style');
-        style.innerHTML = styles;
+    await onWindowLoad();
+    if (document.body.contains(tempCachingIFrame)) {
+      document.body.removeChild(tempCachingIFrame);
+    }
 
-        const container = document.createElement('div');
-        container.className = 'por_portis-container';
+    const style = document.createElement('style');
+    style.innerHTML = styles;
 
-        const widgetFrame = document.createElement('div');
-        widgetFrame.id = `portis-container-${Date.now()}`;
-        widgetFrame.className = 'por_portis-widget-frame';
+    const container = document.createElement('div');
+    container.className = PORTIS_CONTAINER_CLASS;
 
-        container.appendChild(widgetFrame);
-        document.body.appendChild(container);
-        document.head.appendChild(style);
+    const widgetFrame = document.createElement('div');
+    widgetFrame.id = `portis-container-${Date.now()}`;
+    widgetFrame.className = 'por_portis-widget-frame';
 
-        const connection = Penpal.connectToChild<IConnectionMethods>({
-          url: this._widgetUrl,
-          appendTo: document.getElementById(widgetFrame.id)!,
-          methods: {
-            setHeight: this._setHeight.bind(this),
-            getWindowSize: this._getWindowSize.bind(this),
-            onLogin: this._onLogin.bind(this),
-            onLogout: this._onLogout.bind(this),
-          },
-        });
+    container.appendChild(widgetFrame);
+    document.body.appendChild(container);
+    document.head.appendChild(style);
 
-        connection.iframe.style.position = 'absolute';
-        connection.iframe.style.height = '100%';
-        connection.iframe.style.width = '100%';
-        connection.iframe.style.border = '0 transparent';
-
-        const communication = await connection.promise;
-        resolve({ communication, iframe: connection.iframe, widgetFrame });
-      };
-
-      if (['loaded', 'interactive', 'complete'].indexOf(document.readyState) > -1) {
-        onload();
-      } else {
-        window.addEventListener('load', onload.bind(this), false);
-      }
+    const connection = Penpal.connectToChild<IConnectionMethods>({
+      url: this._widgetUrl,
+      appendTo: document.getElementById(widgetFrame.id)!,
+      methods: {
+        setHeight: this._setHeight.bind(this),
+        getWindowSize: this._getWindowSize.bind(this),
+        onLogin: this._onLogin.bind(this),
+        onLogout: this._onLogout.bind(this),
+        onActiveWalletChanged: this._onActiveWalletChanged.bind(this),
+        onError: this._onError.bind(this),
+      },
     });
+
+    connection.iframe.style.position = 'absolute';
+    connection.iframe.style.height = '100%';
+    connection.iframe.style.width = '100%';
+    connection.iframe.style.border = '0 transparent';
+
+    const communication = await connection.promise;
+    communication.retrieveSession(this.config);
+
+    return { communication, iframe: connection.iframe, widgetFrame };
   }
 
   private _initPocketProvider() {
-    const provider = new PocketProvider(this.config.network.chainId, this.pocketAAT, this.pocket, this.txSigner);
+    const provider = new PocketProvider(this.config.network.chainId, this._pocketAAT, this._pocket, this._txSigner);
     return provider;
   }
 
-  private _initProvider() {
+  private _initProvider(options: IOptions) {
     const engine = new ProviderEngine();
     const query = new Query(engine);
 
@@ -292,6 +366,15 @@ export default class Portis {
     engine.addProvider(new SubscriptionsSubprovider());
     engine.addProvider(new FilterSubprovider());
     engine.addProvider(new NonceSubprovider());
+    engine.addProvider({
+      setEngine: _ => _,
+      handleRequest: async (payload, next, end) => {
+        if (!payload.id) {
+          payload.id = 42;
+        }
+        next();
+      },
+    });
 
     engine.addProvider(
       new HookedWalletSubprovider({
@@ -403,8 +486,27 @@ export default class Portis {
   }
 
   private _onLogout() {
+    this._selectedAddress = '';
     if (this._onLogoutCallback) {
       this._onLogoutCallback();
     }
+  }
+
+  private _onActiveWalletChanged(walletAddress: string) {
+    if (this._onActiveWalletChangedCallback) {
+      this._onActiveWalletChangedCallback(walletAddress);
+    }
+  }
+
+  private _onError(error: Error) {
+    if (this._onErrorCallback) {
+      this._onErrorCallback(error);
+    }
+  }
+
+  private clearSubprovider(subproviderType) {
+    const subprovider = this.provider._providers.find(subprovider => subprovider instanceof subproviderType);
+    this.provider.removeProvider(subprovider);
+    this.provider.addProvider(new subproviderType());
   }
 }
