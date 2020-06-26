@@ -13,7 +13,7 @@ import { Query } from './utils/query';
 import { onWindowLoad } from './utils/onWindowLoad';
 import { styles } from './styles';
 import { validateSecureOrigin } from './utils/secureOrigin';
-import PocketJSCore from 'pocket-js-core';
+import { Pocket, PocketAAT, PocketProvider, TransactionSigner, Transaction } from '@pokt-network/web3-provider';
 
 const VERSION = '$$PORTIS_SDK_VERSION$$';
 const WIDGET_URL = 'https://widget.portis.io';
@@ -34,7 +34,7 @@ tempCachingIFrame.src = WIDGET_URL;
 onWindowLoad().then(() => {
   if (document.getElementsByClassName(PORTIS_IFRAME_CLASS).length) {
     console.warn(
-      'Portis script was already loaded. This might cause unexpected behavior. If loading with a <script> tag, please make sure that you only load it once.',
+      `Portis script was already loaded. This might cause unexpected behavior. If loading with a <script> tag, please make sure that you only load it once.`,
     );
   }
   document.body.appendChild(tempCachingIFrame);
@@ -55,6 +55,9 @@ export default class Portis {
   private _onLogoutCallback: () => void;
   private _onActiveWalletChangedCallback: (walletAddress: string) => void;
   private _onErrorCallback: (error: Error) => void;
+  private _pocket?: Pocket = undefined;
+  private _pocketAAT?: PocketAAT = undefined;
+  private _txSigner?: TransactionSigner = undefined;
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
@@ -67,8 +70,49 @@ export default class Portis {
       scope: options.scope,
       registerPageByDefault: options.registerPageByDefault,
     };
+
+    if (options.pocket !== undefined) {
+      if (options.pocketAAT === undefined || options.accounts === undefined || options.privateKeys === undefined) {
+        throw new Error(
+          "[Portis] illegal 'node protocol' parameter. In order to use the Pocket Network you need to provide a Pocket AAT object an accounts object and a privateKeys in the options",
+        );
+      }
+
+      const ethTxSigner = {
+        hasAddress: async function(address: string) {
+          let accounts: Array<string> = options.accounts == undefined ? [] : options.accounts;
+          return accounts.includes(address.toUpperCase());
+        },
+        signTransaction: async function(txParams) {
+          try {
+            let privateKeys: Array<string> = options.privateKeys == undefined ? [] : options.privateKeys;
+            const pkString = privateKeys[0];
+            const privateKeyBuffer = Buffer.from(pkString, 'hex');
+            const tx = new Transaction(txParams, {
+              chain: this.chain,
+            });
+            tx.sign(privateKeyBuffer);
+            return '0x' + tx.serialize().toString('hex');
+          } catch (error) {
+            return error;
+          }
+        },
+      };
+
+      const ethTransactionSigner = new TransactionSigner(
+        options.accounts,
+        options.privateKeys,
+        ethTxSigner.hasAddress,
+        ethTxSigner.signTransaction,
+      );
+
+      this._pocketAAT = options.pocketAAT;
+      this._pocket = options.pocket;
+      this._txSigner = ethTransactionSigner;
+    }
+
     this.widget = this._initWidget();
-    this.provider = this._initProvider(options);
+    this.provider = this._pocket === undefined ? this._initProvider(options) : this._initPocketProvider();
   }
 
   changeNetwork(network: string | INetwork, gasRelay?: boolean) {
@@ -233,6 +277,11 @@ export default class Portis {
     return { communication, iframe: connection.iframe, widgetFrame };
   }
 
+  private _initPocketProvider() {
+    const provider = new PocketProvider(this.config.network.chainId, this._pocketAAT, this._pocket, this._txSigner);
+    return provider;
+  }
+
   private _initProvider(options: IOptions) {
     const engine = new ProviderEngine();
     const query = new Query(engine);
@@ -371,53 +420,18 @@ export default class Portis {
       }),
     );
 
-    if (!options.pocketDevId) {
-      engine.addProvider({
-        setEngine: _ => _,
-        handleRequest: async (payload, next, end) => {
-          const widgetCommunication = (await this.widget).communication;
-          const { error, result } = await widgetCommunication.relay(payload, this.config);
-          if (payload.method === 'net_version') {
-            this._network = result;
-            engine.networkVersion = this._network;
-          }
-          end(error, result);
-        },
-      });
-    } else {
-      const pocket = new PocketJSCore.Pocket({
-        devID: options.pocketDevId,
-        networkName: 'ETH',
-        netIDs: [this.config.network.chainId],
-      });
-      engine.addProvider({
-        setEngine: _ => _,
-        handleRequest: async (payload, next, end) => {
-          const response = await pocket.sendRelay(
-            new PocketJSCore.Relay('ETH', this.config.network.chainId, JSON.stringify(payload), pocket.configuration),
-          );
-          let result;
-          let error;
-          if (response instanceof Error || !response) {
-            error = response || new Error('Unknown error');
-            result = null;
-          } else {
-            try {
-              result = JSON.parse(response).result;
-              error = null;
-            } catch (e) {
-              result = null;
-              error = e;
-            }
-          }
-          if (payload.method === 'net_version') {
-            this._network = result;
-            engine.networkVersion = this._network;
-          }
-          end(error, result);
-        },
-      });
-    }
+    engine.addProvider({
+      setEngine: _ => _,
+      handleRequest: async (payload, next, end) => {
+        const widgetCommunication = (await this.widget).communication;
+        const { error, result } = await widgetCommunication.relay(payload, this.config);
+        if (payload.method === 'net_version') {
+          this._network = result;
+          engine.networkVersion = this._network;
+        }
+        end(error, result);
+      },
+    });
 
     engine.enable = () =>
       new Promise((resolve, reject) => {
