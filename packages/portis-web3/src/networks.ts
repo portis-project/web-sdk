@@ -96,6 +96,14 @@ const networks: { [key: string]: INetwork } = {
     nodeUrl: 'https://node.mainnet.lightstreams.io',
     chainId: '163',
   },
+  matic: {
+    nodeUrl: 'https://rpc-mainnet.matic.network',
+    chainId: '137',
+  },
+  maticMumbai: {
+    nodeUrl: 'https://rpc-mumbai.matic.today',
+    chainId: '80001',
+  },
   maticAlpha: {
     nodeUrl: 'https://alpha.ethereum.matic.network',
     chainId: '4626',
