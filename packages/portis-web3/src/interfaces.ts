@@ -1,3 +1,5 @@
+import { Pocket, PocketAAT } from '@pokt-network/web3-provider';
+
 export interface INetwork {
   nodeUrl: string;
   chainId?: string;
@@ -49,8 +51,11 @@ export interface IOptions {
   scope?: Scope[];
   gasRelay?: boolean;
   registerPageByDefault?: boolean;
-  pocketDevId?: string;
   staging?: boolean;
+  pocket?: Pocket;
+  pocketAAT?: PocketAAT;
+  accounts?: Array<string>;
+  privateKeys?: Array<string>;
 }
 
 export interface ITransactionRequest {

@@ -28,7 +28,7 @@
     "nodemon": "1.19.4",
     "replace-in-file": "3.4.3",
     "rimraf": "2.6.1",
-    "typescript": "3.2.2",
+    "typescript": "3.8.3",
     "webpack": "4.28.3",
     "webpack-cli": "3.1.2"
   },
@@ -40,9 +40,9 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@pokt-network/web3-provider": "0.0.5-rc",
     "@portis/web3-provider-engine": "1.1.0",
     "ethereumjs-util": "5.2.0",
-    "penpal": "3.0.7",
-    "pocket-js-core": "0.0.3"
+    "penpal": "3.0.7"
   }
 }
