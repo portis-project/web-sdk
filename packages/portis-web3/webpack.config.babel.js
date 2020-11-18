@@ -1,4 +1,15 @@
+const dotenv = require('dotenv');
 const path = require('path');
+const webpack = require('webpack');
+
+dotenv.config();
+
+const portisEnvVars = Object.keys(process.env)
+  .filter(key => key.startsWith('PORTIS'))
+  .reduce((agg, key) => {
+    agg[`process.env.${key}`] = JSON.stringify(process.env[key]);
+    return agg;
+  }, {});
 
 export default () => [
   {
@@ -21,11 +32,12 @@ export default () => [
           test: /\.(js)$/,
           include: [
             path.resolve(__dirname, 'src'),
-            path.resolve(__dirname, 'node_modules/@portis/web3-provider-engine')
+            path.resolve(__dirname, 'node_modules/@portis/web3-provider-engine'),
           ],
           use: 'babel-loader',
         },
       ],
     },
+    plugins: [new webpack.DefinePlugin(portisEnvVars)],
   },
 ];

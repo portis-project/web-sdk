@@ -16,7 +16,8 @@ import { validateSecureOrigin } from './utils/secureOrigin';
 import PocketJSCore from 'pocket-js-core';
 
 const VERSION = '$$PORTIS_SDK_VERSION$$';
-const WIDGET_URL = 'https://widget.portis.io';
+// Create a .env file to override the default WIDGET_URL
+const WIDGET_URL = process.env.PORTIS_WIDGET_URL || 'https://widget.portis.io';
 const STAGING_WIDGET_URL = 'https://widget-staging.portis.io';
 const SUPPORTED_SCOPES = ['email', 'reputation'];
 const PORTIS_IFRAME_CLASS = 'por_portis-iframe';
