@@ -7,3 +7,4 @@ umd
 es
 lib
 *.code-workspace
+.env

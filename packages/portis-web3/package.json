@@ -24,6 +24,7 @@
     "babel-plugin-add-module-exports": "1.0.0",
     "babel-plugin-transform-runtime": "6.23.0",
     "babel-preset-env": "1.7.0",
+    "dotenv": "8.2.0",
     "dts-bundle": "0.7.3",
     "nodemon": "1.19.4",
     "replace-in-file": "3.4.3",
