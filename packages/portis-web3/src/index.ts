@@ -229,7 +229,7 @@ export default class Portis {
     connection.iframe.style.border = '0 transparent';
 
     const communication = await connection.promise;
-    communication.retrieveSession(this.config);
+    communication.setSdkConfig(this.config);
 
     return { communication, iframe: connection.iframe, widgetFrame };
   }

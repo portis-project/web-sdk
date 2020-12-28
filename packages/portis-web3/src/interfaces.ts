@@ -32,6 +32,7 @@ export interface IConnectionMethods {
   }>;
   showBitcoinWallet: (path: string, config: ISDKConfig) => Promise<void>;
   retrieveSession: (config: ISDKConfig) => Promise<void>;
+  setSdkConfig: (config: ISDKConfig) => Promise<void>;
 }
 
 export interface ISDKConfig {
