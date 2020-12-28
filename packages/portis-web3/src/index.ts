@@ -1,13 +1,13 @@
-import ProviderEngine from '@portis/web3-provider-engine';
-import CacheSubprovider from '@portis/web3-provider-engine/subproviders/cache.js';
-import FixtureSubprovider from '@portis/web3-provider-engine/subproviders/fixture.js';
-import FilterSubprovider from '@portis/web3-provider-engine/subproviders/filters.js';
-import HookedWalletSubprovider from '@portis/web3-provider-engine/subproviders/hooked-wallet.js';
-import NonceSubprovider from '@portis/web3-provider-engine/subproviders/nonce-tracker.js';
-import SubscriptionsSubprovider from '@portis/web3-provider-engine/subproviders/subscriptions.js';
-import Penpal, { AsyncMethodReturns } from 'penpal';
+import ProviderEngine from 'web3-provider-engine';
+const CacheSubprovider = require('web3-provider-engine/dist/es5/subproviders/cache.js');
+const FixtureSubprovider = require('web3-provider-engine/dist/es5/subproviders/fixture.js');
+const FilterSubprovider = require('web3-provider-engine/dist/es5/subproviders/filters.js');
+const HookedWalletSubprovider = require('web3-provider-engine/dist/es5/subproviders/hooked-wallet.js');
+const NonceSubprovider = require('web3-provider-engine/dist/es5/subproviders/nonce-tracker.js');
+const SubscriptionsSubprovider = require('web3-provider-engine/dist/es5/subproviders/subscriptions.js');
+import Penpal from 'penpal';
 import { networkAdapter } from './networks';
-import { ISDKConfig, IConnectionMethods, INetwork, IOptions, BTCSignTxInput, BTCSignTxOutput } from './interfaces';
+import { ISDKConfig, IConnectionMethods, INetwork, IOptions, IWidget, BTCSignTxSDKInput } from './interfaces';
 import { getTxGas } from './utils/getTxGas';
 import { Query } from './utils/query';
 import { onWindowLoad } from './utils/onWindowLoad';
@@ -16,7 +16,7 @@ import { validateSecureOrigin } from './utils/secureOrigin';
 import PocketJSCore from 'pocket-js-core';
 
 const VERSION = '$$PORTIS_SDK_VERSION$$';
-// Create a .env file to override the default WIDGET_URL
+// Create a .env file to override the default WIDGET_URL when running on
 const WIDGET_URL = process.env.PORTIS_WIDGET_URL || 'https://widget.portis.io';
 const STAGING_WIDGET_URL = 'https://widget-staging.portis.io';
 const SUPPORTED_SCOPES = ['email', 'reputation'];
@@ -43,11 +43,9 @@ onWindowLoad().then(() => {
 
 export default class Portis {
   config: ISDKConfig;
-  widget: Promise<{
-    communication: AsyncMethodReturns<IConnectionMethods>;
-    iframe: HTMLIFrameElement;
-    widgetFrame: HTMLDivElement;
-  }>;
+  widgetPromise: Promise<IWidget>;
+  widgetInstance: IWidget;
+  engine: ProviderEngine;
   provider;
   private _selectedAddress: string;
   private _network: string;
@@ -68,7 +66,6 @@ export default class Portis {
       scope: options.scope,
       registerPageByDefault: options.registerPageByDefault,
     };
-    this.widget = this._initWidget();
     this.provider = this._initProvider(options);
   }
 
@@ -83,15 +80,18 @@ export default class Portis {
     this.config.defaultEmail = email;
   }
 
-  async showPortis() {
-    const widgetCommunication = (await this.widget).communication;
-    return widgetCommunication.showPortis(this.config);
+  // async singleton
+  async getWidget() {
+    if (!this.widgetInstance) {
+      if (!this.widgetPromise) {
+        this.widgetPromise = this._initWidget();
+      }
+      this.widgetInstance = await this.widgetPromise;
+    }
+    return this.widgetInstance;
   }
 
-  async logout() {
-    const widgetCommunication = (await this.widget).communication;
-    return widgetCommunication.logout();
-  }
+  // Population by the dev of SDK callbacks that might be invoked by the widget
 
   onLogin(callback: (walletAddress: string, email?: string, reputation?: string) => void) {
     this._onLoginCallback = callback;
@@ -109,36 +109,44 @@ export default class Portis {
     this._onErrorCallback = callback;
   }
 
+  // SDK methods that could be invoked by the user and handled by the widget
+
+  async showPortis() {
+    const widgetCommunication = (await this.getWidget()).communication;
+    return widgetCommunication.showPortis(this.config);
+  }
+
+  async logout() {
+    const widgetCommunication = (await this.getWidget()).communication;
+    return widgetCommunication.logout();
+  }
+
   async getExtendedPublicKey(path: string = "m/44'/60'/0'/0/0", coin: string = 'Ethereum') {
-    const widgetCommunication = (await this.widget).communication;
+    const widgetCommunication = (await this.getWidget()).communication;
     return widgetCommunication.getExtendedPublicKey(path, coin, this.config);
   }
 
   async importWallet(mnemonicOrPrivateKey: string) {
-    const widgetCommunication = (await this.widget).communication;
+    const widgetCommunication = (await this.getWidget()).communication;
     return widgetCommunication.importWallet(mnemonicOrPrivateKey, this.config);
   }
 
   async isLoggedIn() {
-    const widgetCommunication = (await this.widget).communication;
+    const widgetCommunication = (await this.getWidget()).communication;
     return widgetCommunication.isLoggedIn();
   }
 
-  async signBitcoinTransaction(params: {
-    coin: string;
-    inputs: BTCSignTxInput[];
-    outputs: BTCSignTxOutput[];
-    locktime?: number;
-    version?: number;
-  }) {
-    const widgetCommunication = (await this.widget).communication;
+  async signBitcoinTransaction(params: BTCSignTxSDKInput) {
+    const widgetCommunication = (await this.getWidget()).communication;
     return widgetCommunication.signBitcoinTransaction(params, this.config);
   }
 
   async showBitcoinWallet(path: string = "m/49'/0'/0'/0/0") {
-    const widgetCommunication = (await this.widget).communication;
+    const widgetCommunication = (await this.getWidget()).communication;
     return widgetCommunication.showBitcoinWallet(path, this.config);
   }
+
+  // internal methods
 
   private _checkIfWidgetAlreadyInitialized() {
     if (document.getElementsByClassName(PORTIS_CONTAINER_CLASS).length) {
@@ -186,11 +194,7 @@ export default class Portis {
     }
   }
 
-  private async _initWidget(): Promise<{
-    communication: AsyncMethodReturns<IConnectionMethods>;
-    iframe: HTMLIFrameElement;
-    widgetFrame: HTMLDivElement;
-  }> {
+  private async _initWidget(): Promise<IWidget> {
     await onWindowLoad();
     if (document.body.contains(tempCachingIFrame)) {
       document.body.removeChild(tempCachingIFrame);
@@ -231,18 +235,23 @@ export default class Portis {
     const communication = await connection.promise;
     communication.setSdkConfig(this.config);
 
-    return { communication, iframe: connection.iframe, widgetFrame };
+    return { communication, widgetFrame };
   }
 
   private _initProvider(options: IOptions) {
-    const engine = new ProviderEngine();
-    const query = new Query(engine);
+    // don't init the engine twice
+    if (this.engine) {
+      return this.engine;
+    }
 
-    engine.send = (payload, callback) => {
+    this.engine = new ProviderEngine();
+    const query = new Query(this.engine);
+
+    this.engine.send = (payload, callback) => {
       // Web3 1.0 beta.38 (and above) calls `send` with method and parameters
       if (typeof payload === 'string') {
         return new Promise((resolve, reject) => {
-          engine.sendAsync(
+          this.engine.sendAsync(
             {
               jsonrpc: '2.0',
               id: 42,
@@ -262,7 +271,7 @@ export default class Portis {
 
       // Web3 1.0 beta.37 (and below) uses `send` with a callback for async queries
       if (callback) {
-        engine.sendAsync(payload, callback);
+        this.engine.sendAsync(payload, callback);
         return;
       }
 
@@ -281,7 +290,7 @@ export default class Portis {
           break;
 
         case 'eth_uninstallFilter':
-          engine.sendAsync(payload, _ => _);
+          this.engine.sendAsync(payload, _ => _);
           result = true;
           break;
 
@@ -299,7 +308,7 @@ export default class Portis {
       };
     };
 
-    engine.addProvider(
+    this.engine.addProvider(
       new FixtureSubprovider({
         web3_clientVersion: `Portis/v${this.config.version}/javascript`,
         net_listening: true,
@@ -309,11 +318,20 @@ export default class Portis {
       }),
     );
 
-    engine.addProvider(new CacheSubprovider());
-    engine.addProvider(new SubscriptionsSubprovider());
-    engine.addProvider(new FilterSubprovider());
-    engine.addProvider(new NonceSubprovider());
-    engine.addProvider({
+    // cache layer
+    this.engine.addProvider(new CacheSubprovider());
+
+    // subscriptions manager
+    this.engine.addProvider(new SubscriptionsSubprovider());
+
+    // filters
+    this.engine.addProvider(new FilterSubprovider());
+
+    // pending nonce
+    this.engine.addProvider(new NonceSubprovider());
+
+    // set default id when needed
+    this.engine.addProvider({
       setEngine: _ => _,
       handleRequest: async (payload, next, end) => {
         if (!payload.id) {
@@ -323,10 +341,11 @@ export default class Portis {
       },
     });
 
-    engine.addProvider(
+    // main web3 functionality - carried out via widget communication
+    this.engine.addProvider(
       new HookedWalletSubprovider({
         getAccounts: async cb => {
-          const widgetCommunication = (await this.widget).communication;
+          const widgetCommunication = (await this.getWidget()).communication;
           const { error, result } = await widgetCommunication.getAccounts(this.config);
           if (!error && result) {
             this._selectedAddress = result[0];
@@ -334,30 +353,30 @@ export default class Portis {
           cb(error, result);
         },
         signTransaction: async (txParams, cb) => {
-          const widgetCommunication = (await this.widget).communication;
+          const widgetCommunication = (await this.getWidget()).communication;
           const { error, result } = await widgetCommunication.signTransaction(txParams, this.config);
           cb(error, result);
         },
         signMessage: async (msgParams, cb) => {
-          const widgetCommunication = (await this.widget).communication;
+          const widgetCommunication = (await this.getWidget()).communication;
           const params = Object.assign({}, msgParams, { messageStandard: 'signMessage' });
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
         },
         signPersonalMessage: async (msgParams, cb) => {
-          const widgetCommunication = (await this.widget).communication;
+          const widgetCommunication = (await this.getWidget()).communication;
           const params = Object.assign({}, msgParams, { messageStandard: 'signPersonalMessage' });
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
         },
         signTypedMessage: async (msgParams, cb) => {
-          const widgetCommunication = (await this.widget).communication;
+          const widgetCommunication = (await this.getWidget()).communication;
           const params = Object.assign({}, msgParams, { messageStandard: 'signTypedMessage' });
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
         },
         signTypedMessageV3: async (msgParams, cb) => {
-          const widgetCommunication = (await this.widget).communication;
+          const widgetCommunication = (await this.getWidget()).communication;
           const params = Object.assign({}, msgParams, { messageStandard: 'signTypedMessageV3' });
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
@@ -373,14 +392,14 @@ export default class Portis {
     );
 
     if (!options.pocketDevId) {
-      engine.addProvider({
+      this.engine.addProvider({
         setEngine: _ => _,
         handleRequest: async (payload, next, end) => {
-          const widgetCommunication = (await this.widget).communication;
+          const widgetCommunication = (await this.getWidget()).communication;
           const { error, result } = await widgetCommunication.relay(payload, this.config);
           if (payload.method === 'net_version') {
             this._network = result;
-            engine.networkVersion = this._network;
+            this.engine.networkVersion = this._network;
           }
           end(error, result);
         },
@@ -391,7 +410,7 @@ export default class Portis {
         networkName: 'ETH',
         netIDs: [this.config.network.chainId],
       });
-      engine.addProvider({
+      this.engine.addProvider({
         setEngine: _ => _,
         handleRequest: async (payload, next, end) => {
           const response = await pocket.sendRelay(
@@ -413,16 +432,16 @@ export default class Portis {
           }
           if (payload.method === 'net_version') {
             this._network = result;
-            engine.networkVersion = this._network;
+            this.engine.networkVersion = this._network;
           }
           end(error, result);
         },
       });
     }
 
-    engine.enable = () =>
+    this.engine.enable = () =>
       new Promise((resolve, reject) => {
-        engine.sendAsync({ method: 'eth_accounts' }, (error, response) => {
+        this.engine.sendAsync({ method: 'eth_accounts' }, (error, response) => {
           if (error) {
             reject(error);
           } else {
@@ -431,13 +450,13 @@ export default class Portis {
         });
       });
 
-    engine.isConnected = () => {
+    this.engine.isConnected = () => {
       return true;
     };
 
-    engine.isPortis = true;
+    this.engine.isPortis = true;
 
-    engine.on('error', error => {
+    this.engine.on('error', error => {
       if (error && error.message && error.message.includes('PollingBlockTracker')) {
         console.warn('If you see this warning constantly, there might be an error with your RPC node.');
       } else {
@@ -445,12 +464,12 @@ export default class Portis {
       }
     });
 
-    engine.start();
-    return engine;
+    this.engine.start();
+    return this.engine;
   }
 
   private async _setHeight(height: number) {
-    const widgetFrame = (await this.widget).widgetFrame;
+    const widgetFrame = (await this.getWidget()).widgetFrame;
     widgetFrame.style.height = `${height}px`;
   }
 

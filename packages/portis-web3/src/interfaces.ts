@@ -1,3 +1,5 @@
+import { AsyncMethodReturns } from 'penpal';
+
 export interface INetwork {
   nodeUrl: string;
   chainId?: string;
@@ -31,10 +33,13 @@ export interface IConnectionMethods {
     };
   }>;
   showBitcoinWallet: (path: string, config: ISDKConfig) => Promise<void>;
-  retrieveSession: (config: ISDKConfig) => Promise<void>;
   setSdkConfig: (config: ISDKConfig) => Promise<void>;
 }
 
+export interface IWidget {
+  communication: AsyncMethodReturns<IConnectionMethods>;
+  widgetFrame: HTMLDivElement;
+}
 export interface ISDKConfig {
   dappId: string;
   network: INetwork;
@@ -131,24 +136,12 @@ export interface BitcoinScriptSig {
   hex: string;
 }
 
-export interface BTCSignTxInput {
-  addressNList: BIP32Path;
-  scriptType?: BTCInputScriptType;
-  sequence?: number;
-  amount: string;
-  vout: number;
-  txid: string;
-  tx?: BitcoinTx;
-  hex: string;
-}
-
-export interface BTCSignTxOutput {
-  addressNList?: BIP32Path;
-  scriptType?: BTCOutputScriptType;
-  address?: string;
-  addressType: BTCOutputAddressType;
-  amount: string;
-  isChange: boolean;
+export interface BTCSignTxSDKInput {
+  coin: string;
+  inputs: BTCSignTxInput[];
+  outputs: BTCSignTxOutput[];
+  locktime?: number;
+  version?: number;
 }
 
 export type BTCInputScriptType = 'p2pkh' | 'p2sh' | 'external' | 'p2wpkh' | 'p2sh-p2wpkh';
