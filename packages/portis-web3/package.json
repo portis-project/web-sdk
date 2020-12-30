@@ -1,6 +1,6 @@
 {
   "name": "@portis/web3",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Portis Web3 SDK",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -15,7 +15,7 @@
     "dts-bundle": "dts-bundle --name umd/index --main es --outputAsModuleFolder",
     "insert-version": "node utils/replace.js",
     "print-integrity": "node utils/integrity.js",
-    "prepublish": "npm run build",
+    "prepublish": "PORTIS_WIDGET_URL=\"\" npm run build",
     "start": "nodemon --watch src --watch utils -e ts -x \"npm run build\""
   },
   "devDependencies": {
