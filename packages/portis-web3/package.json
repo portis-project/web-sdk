@@ -15,7 +15,7 @@
     "dts-bundle": "dts-bundle --name umd/index --main es --outputAsModuleFolder",
     "insert-version": "node utils/replace.js",
     "print-integrity": "node utils/integrity.js",
-    "prepublish": "PORTIS_WIDGET_URL=\"\" npm run build",
+    "prepublishOnly": "PORTIS_WIDGET_URL=\"\" npm run build",
     "start": "nodemon --watch src --watch utils -e ts -x \"npm run build\""
   },
   "devDependencies": {
