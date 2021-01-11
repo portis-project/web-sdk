@@ -20,25 +20,15 @@ const VERSION = '$$PORTIS_SDK_VERSION$$';
 const WIDGET_URL = process.env.PORTIS_WIDGET_URL || 'https://widget.portis.io';
 const STAGING_WIDGET_URL = 'https://widget-staging.portis.io';
 const SUPPORTED_SCOPES = ['email', 'reputation'];
-const PORTIS_IFRAME_CLASS = 'por_portis-iframe';
+const PORTIS_IFRAME_CLASS = 'por_portis-widget-frame';
 const PORTIS_CONTAINER_CLASS = 'por_portis-container';
 
-const tempCachingIFrame = document.createElement('iframe');
-tempCachingIFrame.className = PORTIS_IFRAME_CLASS;
-tempCachingIFrame.style.width = '0';
-tempCachingIFrame.style.height = '0';
-tempCachingIFrame.style.border = 'none';
-tempCachingIFrame.style.position = 'absolute';
-tempCachingIFrame.style.top = '-999px';
-tempCachingIFrame.style.left = '-999px';
-tempCachingIFrame.src = WIDGET_URL;
 onWindowLoad().then(() => {
   if (document.getElementsByClassName(PORTIS_IFRAME_CLASS).length) {
     console.warn(
       'Portis script was already loaded. This might cause unexpected behavior. If loading with a <script> tag, please make sure that you only load it once.',
     );
   }
-  document.body.appendChild(tempCachingIFrame);
 });
 
 export default class Portis {
@@ -196,9 +186,6 @@ export default class Portis {
 
   private async _initWidget(): Promise<IWidget> {
     await onWindowLoad();
-    if (document.body.contains(tempCachingIFrame)) {
-      document.body.removeChild(tempCachingIFrame);
-    }
 
     const style = document.createElement('style');
     style.innerHTML = styles;
@@ -208,7 +195,7 @@ export default class Portis {
 
     const widgetFrame = document.createElement('div');
     widgetFrame.id = `portis-container-${Date.now()}`;
-    widgetFrame.className = 'por_portis-widget-frame';
+    widgetFrame.className = PORTIS_IFRAME_CLASS;
 
     container.appendChild(widgetFrame);
     document.body.appendChild(container);
@@ -227,13 +214,12 @@ export default class Portis {
       },
     });
 
+    const communication = await connection.promise;
+    communication.setSdkConfig(this.config);
     connection.iframe.style.position = 'absolute';
     connection.iframe.style.height = '100%';
     connection.iframe.style.width = '100%';
     connection.iframe.style.border = '0 transparent';
-
-    const communication = await connection.promise;
-    communication.setSdkConfig(this.config);
 
     return { communication, widgetFrame };
   }
