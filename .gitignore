@@ -5,3 +5,4 @@ Thumbs.db
 .db
 node_modules
 lerna-debug.log
+.idea
