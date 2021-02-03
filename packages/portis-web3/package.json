@@ -1,6 +1,6 @@
 {
   "name": "@portis/web3",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Portis Web3 SDK",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -16,7 +16,8 @@
     "insert-version": "node utils/replace.js",
     "print-integrity": "node utils/integrity.js",
     "prepublishOnly": "PORTIS_WIDGET_URL=\"\" npm run build",
-    "start": "nodemon --watch src --watch utils -e ts -x \"npm run build\""
+    "start": "nodemon --watch src --watch utils -e ts -x \"npm run build\"",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "babel-core": "6.26.0",
@@ -31,7 +32,8 @@
     "rimraf": "2.6.1",
     "typescript": "3.2.2",
     "webpack": "4.28.3",
-    "webpack-cli": "3.1.2"
+    "webpack-cli": "3.1.2",
+    "patch-package": "6.2.2"
   },
   "keywords": [
     "blockchain",
@@ -41,9 +43,9 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "web3-provider-engine": "16.0.0",
     "ethereumjs-util": "5.2.0",
     "penpal": "3.0.7",
-    "pocket-js-core": "0.0.3"
+    "pocket-js-core": "0.0.3",
+    "web3-provider-engine": "16.0.0"
   }
 }
