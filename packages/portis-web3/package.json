@@ -1,6 +1,6 @@
 {
   "name": "@portis/web3",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Portis Web3 SDK",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -32,8 +32,7 @@
     "rimraf": "2.6.1",
     "typescript": "3.2.2",
     "webpack": "4.28.3",
-    "webpack-cli": "3.1.2",
-    "patch-package": "6.2.2"
+    "webpack-cli": "3.1.2"
   },
   "keywords": [
     "blockchain",
@@ -44,6 +43,7 @@
   "license": "MIT",
   "dependencies": {
     "ethereumjs-util": "5.2.0",
+    "patch-package": "6.2.2",
     "penpal": "3.0.7",
     "pocket-js-core": "0.0.3",
     "web3-provider-engine": "16.0.0"
