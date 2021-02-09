@@ -1,6 +1,6 @@
 {
   "name": "@portis/web3",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "description": "Portis Web3 SDK",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -8,16 +8,16 @@
   "types": "umd/index.d.ts",
   "scripts": {
     "clean": "rimraf umd lib es",
-    "build": "npm run clean && npm run build:lib && npm run build:es && npm run insert-version && npm run build:umd && npm run dts-bundle && npm run print-integrity",
+    "build": "npm run clean && npm run patch-vendors && npm run build:lib && npm run build:es && npm run insert-version && npm run build:umd && npm run dts-bundle && npm run print-integrity",
     "build:lib": "tsc --outDir lib --module commonjs",
     "build:es": "tsc --outDir es --module es2015",
     "build:umd": "webpack",
     "dts-bundle": "dts-bundle --name umd/index --main es --outputAsModuleFolder",
     "insert-version": "node utils/replace.js",
+    "patch-vendors": "patch-package",
     "print-integrity": "node utils/integrity.js",
     "prepublishOnly": "PORTIS_WIDGET_URL=\"\" npm run build",
-    "start": "nodemon --watch src --watch utils -e ts -x \"npm run build\"",
-    "postinstall": "patch-package"
+    "start": "nodemon --watch src --watch utils -e ts -x \"npm run build\""
   },
   "devDependencies": {
     "babel-core": "6.26.0",
