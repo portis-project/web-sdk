@@ -7,13 +7,17 @@ export interface INetwork {
 }
 
 export interface IConnectionMethods {
-  getAccounts: (config: ISDKConfig) => Promise<{ error: string; result: string[] }>;
-  signTransaction: (txParams: ITransactionRequest, config: ISDKConfig) => Promise<{ error: string; result: string }>;
-  signMessage: (msgParams: IMessageParams, config: ISDKConfig) => Promise<{ error: string; result: string }>;
-  relay: (payload: IPayload, config: ISDKConfig) => Promise<{ error: string; result: any }>;
-  showPortis: (config: ISDKConfig) => Promise<void>;
-  importWallet: (mnemonicOrPrivateKey: string, config: ISDKConfig) => Promise<void>;
-  getExtendedPublicKey: (path: string, coin: string, config: ISDKConfig) => Promise<{ error: string; result: string }>;
+  getAccounts: (config: IWidgetConfig) => Promise<{ error: string; result: string[] }>;
+  signTransaction: (txParams: ITransactionRequest, config: IWidgetConfig) => Promise<{ error: string; result: string }>;
+  signMessage: (msgParams: IMessageParams, config: IWidgetConfig) => Promise<{ error: string; result: string }>;
+  relay: (payload: IPayload, config: IWidgetConfig) => Promise<{ error: string; result: any }>;
+  showPortis: (config: IWidgetConfig) => Promise<void>;
+  importWallet: (mnemonicOrPrivateKey: string, config: IWidgetConfig) => Promise<void>;
+  getExtendedPublicKey: (
+    path: string,
+    coin: string,
+    config: IWidgetConfig,
+  ) => Promise<{ error: string; result: string }>;
   logout: () => Promise<{ error: string; result: boolean }>;
   isLoggedIn: () => Promise<{ error: string; result: boolean }>;
   signBitcoinTransaction: (
@@ -24,7 +28,7 @@ export interface IConnectionMethods {
       version?: number;
       locktime?: number;
     },
-    config: ISDKConfig,
+    config: IWidgetConfig,
   ) => Promise<{
     error: string;
     result: {
@@ -32,21 +36,22 @@ export interface IConnectionMethods {
       txid: string;
     };
   }>;
-  showBitcoinWallet: (path: string, config: ISDKConfig) => Promise<void>;
-  setSdkConfig: (config: ISDKConfig) => Promise<void>;
+  showBitcoinWallet: (path: string, config: IWidgetConfig) => Promise<void>;
+  setSdkConfig: (config: IWidgetConfig) => Promise<void>;
 }
 
 export interface IWidget {
   communication: AsyncMethodReturns<IConnectionMethods>;
   widgetFrame: HTMLDivElement;
 }
-export interface ISDKConfig {
+export interface IWidgetConfig {
   dappId: string;
   network: INetwork;
   version: string;
   defaultEmail?: string;
   scope?: Scope[];
   registerPageByDefault?: boolean;
+  staging?: boolean;
 }
 
 export type Scope = 'email';

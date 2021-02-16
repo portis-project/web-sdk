@@ -1,48 +1,41 @@
 import Penpal from 'penpal';
-import { networkAdapter } from '../networks';
-import { ISDKConfig, IConnectionMethods, INetwork, IOptions, IWidget, BTCSignTxSDKInput } from '../interfaces';
+import { IWidgetConfig, IConnectionMethods, IWidget, BTCSignTxSDKInput } from '../interfaces';
 
 import { onWindowLoad } from '../utils/onWindowLoad';
 import { styles } from '../styles';
 import { validateSecureOrigin } from '../utils/secureOrigin';
 
-const VERSION = '$$PORTIS_SDK_VERSION$$';
-// Create a .env file to override the default WIDGET_URL when running on
+// Create a .env file to override the default WIDGET_URL when running locally
 const WIDGET_URL = process.env.PORTIS_WIDGET_URL || 'https://widget.portis.io';
-// const STAGING_WIDGET_URL = 'https://widget-staging.portis.io';
+const STAGING_WIDGET_URL = 'https://widget-staging.portis.io';
 const PORTIS_IFRAME_CLASS = 'por_portis-widget-frame';
 const PORTIS_CONTAINER_CLASS = 'por_portis-container';
 
-onWindowLoad().then(() => {
+export function windowLoadHandler() {
   if (document.getElementsByClassName(PORTIS_IFRAME_CLASS).length) {
     console.warn(
       'Portis script was already loaded. This might cause unexpected behavior. If loading with a <script> tag, please make sure that you only load it once.',
     );
   }
-});
+}
 
 export default class WidgetManager {
-  config: ISDKConfig;
   widgetPromise: Promise<IWidget>;
   widgetInstance: IWidget;
   provider;
-  private _selectedAddress: string;
   private _widgetUrl = WIDGET_URL;
   private _onLoginCallback: (walletAddress: string, email?: string, reputation?: string) => void;
   private _onLogoutCallback: () => void;
   private _onActiveWalletChangedCallback: (walletAddress: string) => void;
   private _onErrorCallback: (error: Error) => void;
 
-  constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
+  constructor(private _widgetConfig: IWidgetConfig, private _clearProviderSession: () => void) {
     validateSecureOrigin();
+    if (_widgetConfig.staging) {
+      console.warn('Please note: you are using the Portis STAGING environment.');
+      this._widgetUrl = STAGING_WIDGET_URL;
+    }
     this._checkIfWidgetAlreadyInitialized();
-    this.config = {
-      dappId,
-      network: networkAdapter(network, options.gasRelay),
-      version: VERSION,
-      scope: options.scope,
-      registerPageByDefault: options.registerPageByDefault,
-    };
   }
 
   // async singleton
@@ -56,21 +49,25 @@ export default class WidgetManager {
     return this.widgetInstance;
   }
 
+  setDefaultEmail(email: string) {
+    this._widgetConfig.defaultEmail = email;
+  }
+
   // Population by the dev of SDK callbacks that might be invoked by the widget
 
-  onLogin(callback: (walletAddress: string, email?: string, reputation?: string) => void) {
+  setOnLoginCallback(callback: (walletAddress: string, email?: string, reputation?: string) => void) {
     this._onLoginCallback = callback;
   }
 
-  onLogout(callback: () => void) {
+  setOnLogoutCallback(callback: () => void) {
     this._onLogoutCallback = callback;
   }
 
-  onActiveWalletChanged(callback: (walletAddress: string) => void) {
+  setOnActiveWalletChangedCallback(callback: (walletAddress: string) => void) {
     this._onActiveWalletChangedCallback = callback;
   }
 
-  onError(callback: (error: Error) => void) {
+  setOnErrorCallback(callback: (error: Error) => void) {
     this._onErrorCallback = callback;
   }
 
@@ -79,7 +76,7 @@ export default class WidgetManager {
   async showPortis() {
     console.log('swiffer');
     const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.showPortis(this.config);
+    return widgetCommunication.showPortis(this._widgetConfig);
   }
 
   async logout() {
@@ -89,12 +86,12 @@ export default class WidgetManager {
 
   async getExtendedPublicKey(path: string = "m/44'/60'/0'/0/0", coin: string = 'Ethereum') {
     const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.getExtendedPublicKey(path, coin, this.config);
+    return widgetCommunication.getExtendedPublicKey(path, coin, this._widgetConfig);
   }
 
   async importWallet(mnemonicOrPrivateKey: string) {
     const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.importWallet(mnemonicOrPrivateKey, this.config);
+    return widgetCommunication.importWallet(mnemonicOrPrivateKey, this._widgetConfig);
   }
 
   async isLoggedIn() {
@@ -104,12 +101,12 @@ export default class WidgetManager {
 
   async signBitcoinTransaction(params: BTCSignTxSDKInput) {
     const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.signBitcoinTransaction(params, this.config);
+    return widgetCommunication.signBitcoinTransaction(params, this._widgetConfig);
   }
 
   async showBitcoinWallet(path: string = "m/49'/0'/0'/0/0") {
     const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.showBitcoinWallet(path, this.config);
+    return widgetCommunication.showBitcoinWallet(path, this._widgetConfig);
   }
 
   // internal methods
@@ -153,7 +150,7 @@ export default class WidgetManager {
     });
 
     const communication = await connection.promise;
-    communication.setSdkConfig(this.config);
+    communication.setSdkConfig(this._widgetConfig);
     connection.iframe.style.position = 'absolute';
     connection.iframe.style.height = '100%';
     connection.iframe.style.width = '100%';
@@ -181,7 +178,7 @@ export default class WidgetManager {
   }
 
   private _onLogout() {
-    this._selectedAddress = '';
+    this._clearProviderSession();
     if (this._onLogoutCallback) {
       this._onLogoutCallback();
     }
