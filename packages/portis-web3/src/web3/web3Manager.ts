@@ -13,13 +13,15 @@ import { Query } from '../utils/query';
 import { AsyncMethodReturns } from 'penpal';
 
 export default class Web3Manager {
-  config: IWidgetConfig;
   engine: ProviderEngine;
   provider;
   private _selectedAddress: string;
   private _network: string;
 
-  constructor(private _getWidgetCommunication: () => Promise<AsyncMethodReturns<IConnectionMethods>>) {
+  constructor(
+    private config: IWidgetConfig,
+    private _getWidgetCommunication: () => Promise<AsyncMethodReturns<IConnectionMethods>>,
+  ) {
     this.provider = this._initProvider();
   }
 
