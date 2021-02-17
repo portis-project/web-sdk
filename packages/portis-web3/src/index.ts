@@ -27,8 +27,10 @@ export default class Portis {
       staging: options.staging,
     };
 
-    this._web3Manager = new Web3Manager(this._getWidgetCommunication);
+    this._getWidgetCommunication = this._getWidgetCommunication.bind(this);
+
     this._widgetManager = new WidgetManager(widgetConfig, this._clearProviderSession);
+    this._web3Manager = new Web3Manager(widgetConfig, this._getWidgetCommunication);
   }
 
   private _clearProviderSession() {
