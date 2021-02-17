@@ -7,7 +7,7 @@ const HookedWalletSubprovider = require('web3-provider-engine/dist/es5/subprovid
 const NonceSubprovider = require('web3-provider-engine/dist/es5/subproviders/nonce-tracker.js');
 const SubscriptionsSubprovider = require('web3-provider-engine/dist/es5/subproviders/subscriptions.js');
 import { networkAdapter } from '../networks';
-import { IWidgetConfig, INetwork, IOptions, IConnectionMethods } from '../interfaces';
+import { IWidgetConfig, INetwork, IConnectionMethods } from '../interfaces';
 import { getTxGas } from '../utils/getTxGas';
 import { Query } from '../utils/query';
 import { AsyncMethodReturns } from 'penpal';

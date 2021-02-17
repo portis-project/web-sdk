@@ -6,13 +6,13 @@ const HookedWalletSubprovider = require('web3-provider-engine/dist/es5/subprovid
 const NonceSubprovider = require('web3-provider-engine/dist/es5/subproviders/nonce-tracker.js');
 const SubscriptionsSubprovider = require('web3-provider-engine/dist/es5/subproviders/subscriptions.js');
 import Penpal from 'penpal';
-import { networkAdapter } from './networks';
-import { ISDKConfig, IConnectionMethods, INetwork, IOptions, IWidget, BTCSignTxSDKInput } from './interfaces';
-import { getTxGas } from './utils/getTxGas';
-import { Query } from './utils/query';
-import { onWindowLoad } from './utils/onWindowLoad';
-import { styles } from './styles';
-import { validateSecureOrigin } from './utils/secureOrigin';
+import { networkAdapter } from '../networks';
+import { IWidgetConfig, IConnectionMethods, INetwork, IOptions, IWidget, BTCSignTxSDKInput } from '../interfaces';
+import { getTxGas } from '../utils/getTxGas';
+import { Query } from '../utils/query';
+import { onWindowLoad } from '../utils/onWindowLoad';
+import { styles } from '../styles';
+import { validateSecureOrigin } from '../utils/secureOrigin';
 import PocketJSCore from 'pocket-js-core';
 
 const VERSION = '$$PORTIS_SDK_VERSION$$';
@@ -32,7 +32,7 @@ onWindowLoad().then(() => {
 });
 
 export default class Portis {
-  config: ISDKConfig;
+  widgetConfig: IWidgetConfig;
   widgetPromise: Promise<IWidget>;
   widgetInstance: IWidget;
   engine: ProviderEngine;
@@ -49,7 +49,7 @@ export default class Portis {
     validateSecureOrigin();
     this._checkIfWidgetAlreadyInitialized();
     this._validateParams(dappId, network, options);
-    this.config = {
+    this.widgetConfig = {
       dappId,
       network: networkAdapter(network, options.gasRelay),
       version: VERSION,
@@ -63,11 +63,11 @@ export default class Portis {
     const newNetwork = networkAdapter(network, gasRelay);
     this.clearSubprovider(NonceSubprovider);
     this.clearSubprovider(CacheSubprovider);
-    this.config.network = newNetwork;
+    this.widgetConfig.network = newNetwork;
   }
 
   setDefaultEmail(email: string) {
-    this.config.defaultEmail = email;
+    this.widgetConfig.defaultEmail = email;
   }
 
   // async singleton
@@ -103,7 +103,7 @@ export default class Portis {
 
   async showPortis() {
     const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.showPortis(this.config);
+    return widgetCommunication.showPortis(this.widgetConfig);
   }
 
   async logout() {
@@ -113,12 +113,12 @@ export default class Portis {
 
   async getExtendedPublicKey(path: string = "m/44'/60'/0'/0/0", coin: string = 'Ethereum') {
     const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.getExtendedPublicKey(path, coin, this.config);
+    return widgetCommunication.getExtendedPublicKey(path, coin, this.widgetConfig);
   }
 
   async importWallet(mnemonicOrPrivateKey: string) {
     const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.importWallet(mnemonicOrPrivateKey, this.config);
+    return widgetCommunication.importWallet(mnemonicOrPrivateKey, this.widgetConfig);
   }
 
   async isLoggedIn() {
@@ -128,12 +128,12 @@ export default class Portis {
 
   async signBitcoinTransaction(params: BTCSignTxSDKInput) {
     const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.signBitcoinTransaction(params, this.config);
+    return widgetCommunication.signBitcoinTransaction(params, this.widgetConfig);
   }
 
   async showBitcoinWallet(path: string = "m/49'/0'/0'/0/0") {
     const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.showBitcoinWallet(path, this.config);
+    return widgetCommunication.showBitcoinWallet(path, this.widgetConfig);
   }
 
   // internal methods
@@ -215,7 +215,7 @@ export default class Portis {
     });
 
     const communication = await connection.promise;
-    communication.setSdkConfig(this.config);
+    communication.setSdkConfig(this.widgetConfig);
     connection.iframe.style.position = 'absolute';
     connection.iframe.style.height = '100%';
     connection.iframe.style.width = '100%';
@@ -296,7 +296,7 @@ export default class Portis {
 
     this.engine.addProvider(
       new FixtureSubprovider({
-        web3_clientVersion: `Portis/v${this.config.version}/javascript`,
+        web3_clientVersion: `Portis/v${this.widgetConfig.version}/javascript`,
         net_listening: true,
         eth_hashrate: '0x00',
         eth_mining: false,
@@ -332,7 +332,7 @@ export default class Portis {
       new HookedWalletSubprovider({
         getAccounts: async cb => {
           const widgetCommunication = (await this.getWidget()).communication;
-          const { error, result } = await widgetCommunication.getAccounts(this.config);
+          const { error, result } = await widgetCommunication.getAccounts(this.widgetConfig);
           if (!error && result) {
             this._selectedAddress = result[0];
           }
@@ -340,31 +340,31 @@ export default class Portis {
         },
         signTransaction: async (txParams, cb) => {
           const widgetCommunication = (await this.getWidget()).communication;
-          const { error, result } = await widgetCommunication.signTransaction(txParams, this.config);
+          const { error, result } = await widgetCommunication.signTransaction(txParams, this.widgetConfig);
           cb(error, result);
         },
         signMessage: async (msgParams, cb) => {
           const widgetCommunication = (await this.getWidget()).communication;
           const params = Object.assign({}, msgParams, { messageStandard: 'signMessage' });
-          const { error, result } = await widgetCommunication.signMessage(params, this.config);
+          const { error, result } = await widgetCommunication.signMessage(params, this.widgetConfig);
           cb(error, result);
         },
         signPersonalMessage: async (msgParams, cb) => {
           const widgetCommunication = (await this.getWidget()).communication;
           const params = Object.assign({}, msgParams, { messageStandard: 'signPersonalMessage' });
-          const { error, result } = await widgetCommunication.signMessage(params, this.config);
+          const { error, result } = await widgetCommunication.signMessage(params, this.widgetConfig);
           cb(error, result);
         },
         signTypedMessage: async (msgParams, cb) => {
           const widgetCommunication = (await this.getWidget()).communication;
           const params = Object.assign({}, msgParams, { messageStandard: 'signTypedMessage' });
-          const { error, result } = await widgetCommunication.signMessage(params, this.config);
+          const { error, result } = await widgetCommunication.signMessage(params, this.widgetConfig);
           cb(error, result);
         },
         signTypedMessageV3: async (msgParams, cb) => {
           const widgetCommunication = (await this.getWidget()).communication;
           const params = Object.assign({}, msgParams, { messageStandard: 'signTypedMessageV3' });
-          const { error, result } = await widgetCommunication.signMessage(params, this.config);
+          const { error, result } = await widgetCommunication.signMessage(params, this.widgetConfig);
           cb(error, result);
         },
         estimateGas: async (txParams, cb) => {
@@ -382,7 +382,7 @@ export default class Portis {
         setEngine: _ => _,
         handleRequest: async (payload, next, end) => {
           const widgetCommunication = (await this.getWidget()).communication;
-          const { error, result } = await widgetCommunication.relay(payload, this.config);
+          const { error, result } = await widgetCommunication.relay(payload, this.widgetConfig);
           if (payload.method === 'net_version') {
             this._network = result;
             this.engine.networkVersion = this._network;
@@ -394,13 +394,18 @@ export default class Portis {
       const pocket = new PocketJSCore.Pocket({
         devID: options.pocketDevId,
         networkName: 'ETH',
-        netIDs: [this.config.network.chainId],
+        netIDs: [this.widgetConfig.network.chainId],
       });
       this.engine.addProvider({
         setEngine: _ => _,
         handleRequest: async (payload, next, end) => {
           const response = await pocket.sendRelay(
-            new PocketJSCore.Relay('ETH', this.config.network.chainId, JSON.stringify(payload), pocket.configuration),
+            new PocketJSCore.Relay(
+              'ETH',
+              this.widgetConfig.network.chainId,
+              JSON.stringify(payload),
+              pocket.configuration,
+            ),
           );
           let result;
           let error;
