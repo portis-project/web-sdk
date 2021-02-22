@@ -1,5 +1,5 @@
 import Penpal from 'penpal';
-import { IWidgetConfig, IConnectionMethods, IWidget, BTCSignTxSDKInput } from '../interfaces';
+import { ISDKConfig, IConnectionMethods, IWidget, BTCSignTxSDKInput } from '../interfaces';
 
 import { onWindowLoad } from '../utils/onWindowLoad';
 import { styles } from '../styles';
@@ -29,13 +29,13 @@ export default class WidgetManager {
   private _onActiveWalletChangedCallback: (walletAddress: string) => void;
   private _onErrorCallback: (error: Error) => void;
 
-  constructor(private _widgetConfig: IWidgetConfig, private _clearProviderSession: () => void) {
+  constructor(private _widgetConfig: ISDKConfig, private _clearProviderSession: () => void) {
     validateSecureOrigin();
     if (_widgetConfig.staging) {
       console.warn('Please note: you are using the Portis STAGING environment.');
       this._widgetUrl = STAGING_WIDGET_URL;
     }
-    this._checkIfWidgetAlreadyInitialized();
+    WidgetManager._checkIfWidgetAlreadyInitialized();
   }
 
   // async singleton
@@ -74,7 +74,6 @@ export default class WidgetManager {
   // SDK methods that could be invoked by the user and handled by the widget
 
   async showPortis() {
-    console.log('swiffer');
     const widgetCommunication = (await this.getWidget()).communication;
     return widgetCommunication.showPortis(this._widgetConfig);
   }
@@ -111,7 +110,7 @@ export default class WidgetManager {
 
   // internal methods
 
-  private _checkIfWidgetAlreadyInitialized() {
+  private static _checkIfWidgetAlreadyInitialized() {
     if (document.getElementsByClassName(PORTIS_CONTAINER_CLASS).length) {
       console.warn(
         'An instance of Portis was already initialized. This is probably a mistake. Make sure that you use the same Portis instance throughout your app.',
@@ -141,7 +140,7 @@ export default class WidgetManager {
       appendTo: document.getElementById(widgetFrame.id)!,
       methods: {
         setHeight: this._setHeight.bind(this),
-        getWindowSize: this._getWindowSize.bind(this),
+        getWindowSize: WidgetManager._getWindowSize.bind(this),
         onLogin: this._onLogin.bind(this),
         onLogout: this._onLogout.bind(this),
         onActiveWalletChanged: this._onActiveWalletChanged.bind(this),
@@ -164,7 +163,7 @@ export default class WidgetManager {
     widgetFrame.style.height = `${height}px`;
   }
 
-  private _getWindowSize() {
+  private static _getWindowSize() {
     const body = document.getElementsByTagName('body')[0];
     const width = window.innerWidth || document.documentElement.clientWidth || body.clientWidth;
     const height = window.innerHeight || document.documentElement.clientHeight || body.clientHeight;

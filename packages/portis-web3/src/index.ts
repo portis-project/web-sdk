@@ -1,5 +1,5 @@
 import { networkAdapter } from './networks';
-import { INetwork, IOptions, BTCSignTxSDKInput, IWidgetConfig } from './interfaces';
+import { INetwork, IOptions, BTCSignTxSDKInput, ISDKConfig } from './interfaces';
 import { onWindowLoad } from './utils/onWindowLoad';
 import { validateSecureOrigin } from './utils/secureOrigin';
 import WidgetManager, { windowLoadHandler } from './widget/widgetManager';
@@ -18,7 +18,7 @@ export default class Portis {
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
     this._validateParams(dappId, network, options);
-    const widgetConfig: IWidgetConfig = {
+    const widgetConfig: ISDKConfig = {
       dappId,
       network: networkAdapter(network, options.gasRelay),
       version: VERSION,
