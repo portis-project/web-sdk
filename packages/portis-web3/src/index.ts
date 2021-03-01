@@ -14,11 +14,12 @@ onWindowLoad().then(windowLoadHandler);
 export default class Portis {
   private _widgetManager: WidgetManager;
   private _web3Manager: Web3Manager;
+  config: ISDKConfig;
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     validateSecureOrigin();
     this._validateParams(dappId, network, options);
-    const widgetConfig: ISDKConfig = {
+    this.config = {
       dappId,
       network: networkAdapter(network, options.gasRelay),
       version: VERSION,
@@ -29,8 +30,8 @@ export default class Portis {
 
     this._getWidgetCommunication = this._getWidgetCommunication.bind(this);
 
-    this._widgetManager = new WidgetManager(widgetConfig, this._clearProviderSession);
-    this._web3Manager = new Web3Manager(widgetConfig, this._getWidgetCommunication);
+    this._widgetManager = new WidgetManager(this.config, this._clearProviderSession);
+    this._web3Manager = new Web3Manager(this.config, this._getWidgetCommunication);
   }
 
   private _clearProviderSession() {
@@ -41,8 +42,13 @@ export default class Portis {
     return (await this._widgetManager.getWidget()).communication;
   }
 
-  getProvider() {
+  get web3Provider() {
     return this._web3Manager.provider;
+  }
+
+  // Todo: deprecate
+  get provider() {
+    return this.web3Provider;
   }
 
   changeNetwork(network: string | INetwork, gasRelay?: boolean) {
