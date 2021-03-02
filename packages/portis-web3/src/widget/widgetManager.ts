@@ -20,9 +20,8 @@ export function windowLoadHandler() {
 }
 
 export default class WidgetManager {
-  widgetPromise: Promise<IWidget>;
-  widgetInstance: IWidget;
-  provider;
+  private widgetPromise: Promise<IWidget>;
+  private widgetInstance: IWidget;
   private _widgetUrl = WIDGET_URL;
   private _onLoginCallback: (walletAddress: string, email?: string, reputation?: string) => void;
   private _onLogoutCallback: () => void;

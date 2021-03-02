@@ -13,7 +13,7 @@ import { Query } from '../utils/query';
 import { AsyncMethodReturns } from 'penpal';
 
 export default class Web3Manager {
-  engine: ProviderEngine;
+  private engine: ProviderEngine;
   provider;
   private _selectedAddress: string;
   private _network: string;
