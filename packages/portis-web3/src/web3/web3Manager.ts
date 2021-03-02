@@ -157,25 +157,25 @@ export default class Web3Manager {
         },
         signMessage: async (msgParams, cb) => {
           const widgetCommunication = await this._getWidgetCommunication();
-          const params = Object.assign({}, msgParams, { messageStandard: 'signMessage' });
+          const params = { ...msgParams, messageStandard: 'signMessage' };
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
         },
         signPersonalMessage: async (msgParams, cb) => {
           const widgetCommunication = await this._getWidgetCommunication();
-          const params = Object.assign({}, msgParams, { messageStandard: 'signPersonalMessage' });
+          const params = { ...msgParams, messageStandard: 'signPersonalMessage' };
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
         },
         signTypedMessage: async (msgParams, cb) => {
           const widgetCommunication = await this._getWidgetCommunication();
-          const params = Object.assign({}, msgParams, { messageStandard: 'signTypedMessage' });
+          const params = { ...msgParams, messageStandard: 'signTypedMessage' };
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
         },
         signTypedMessageV3: async (msgParams, cb) => {
           const widgetCommunication = await this._getWidgetCommunication();
-          const params = Object.assign({}, msgParams, { messageStandard: 'signTypedMessageV3' });
+          const params = { ...msgParams, messageStandard: 'signTypedMessageV3' };
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
         },
