@@ -102,7 +102,7 @@ export default class Web3Manager {
       return {
         id: payload.id,
         jsonrpc: payload.jsonrpc,
-        result: result,
+        result,
       };
     };
 
