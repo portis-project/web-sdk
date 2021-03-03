@@ -43,6 +43,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@authereum/starkware-abi-encoder": "1.8.0-beta.7",
     "@authereum/starkware-crypto": "1.10.0-beta.7",
     "ethereumjs-util": "5.2.0",
     "penpal": "3.0.7",
