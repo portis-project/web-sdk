@@ -7,7 +7,7 @@ import {
   TransferEthParams,
   TransferParams,
 } from './starkwareTypes';
-import { getAssetId, quantizeAmount, sign, Signature } from '@authereum/starkware-crypto';
+import { getAssetId, getXCoordinate, quantizeAmount, sign, Signature } from '@authereum/starkware-crypto';
 
 export default class StarkwareProvider {
   private _abiEncoder: StarkwareAbiEncoder;
@@ -17,29 +17,27 @@ export default class StarkwareProvider {
   }
 
   register(ethereumAddress, starkKey, operatorSignature) {
-    const txData = this._abiEncoder.registerUser({
+    return this._abiEncoder.registerUser({
       ethKey: ethereumAddress,
       starkKey,
       operatorSignature,
     });
-    console.log(txData);
-    return txData;
   }
-  /**
-   * Do we want to allow users to supply application/index/ethaddress?
-   * */
+
   getStarkKey() {
-    const mnemonic = 'curve become rib fuel garment engine great spring aisle mandate also host';
+    const mnemonic = 'raw reveal finish flash cancel famous improve gas slam unaware polar city';
+    const ethAddress = '0xBA8d15d1FCE4b6f3be8F2DA33c15a678D2f34180';
+
     const layer = 'starkex';
     const application = 'starkexdvf';
     const index = '1';
-    const ethAddress = '0xc536a7ac035015a017146a97f3ef44851eaaef41';
+
     const path = sc.getAccountPath(layer, application, ethAddress, index);
     const keyPair = sc.getKeyPairFromPath(mnemonic, path);
-    return sc.getStarkKey(keyPair);
+    const pubKey = sc.getPublic(keyPair, false);
+    const xCoord = getXCoordinate(pubKey);
+    return '0x' + xCoord;
   }
-
-  createLimitOrder(params: OrderParams) {}
 
   transferEth(params: TransferEthParams): Promise<Signature> {
     const starkKey = this.getStarkKey();
@@ -63,19 +61,22 @@ export default class StarkwareProvider {
     });
   }
 
+  createLimitOrder(params: OrderParams) {}
+
   transferErc20(params: TransferErc20Params) {}
 
   transferErc721(params: TransferErc721Params) {}
 
   private getKeypair() {
-    const mnemonic = 'curve become rib fuel garment engine great spring aisle mandate also host';
+    const mnemonic = 'raw reveal finish flash cancel famous improve gas slam unaware polar city';
+    const ethAddress = '0xBA8d15d1FCE4b6f3be8F2DA33c15a678D2f34180';
+
     const layer = 'starkex';
     const application = 'starkexdvf';
-    const index = '1';
-    const ethAddress = '0xc536a7ac035015a017146a97f3ef44851eaaef41';
+    const index = '2';
+
     const path = sc.getAccountPath(layer, application, ethAddress, index);
-    const keyPair = sc.getKeyPairFromPath(mnemonic, path);
-    return keyPair;
+    return sc.getKeyPairFromPath(mnemonic, path);
   }
 
   private async transfer(input: TransferParams): Promise<Signature> {
