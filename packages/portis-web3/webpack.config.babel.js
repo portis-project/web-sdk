@@ -38,6 +38,9 @@ export default () => [
         },
       ],
     },
-    plugins: [new webpack.DefinePlugin(portisEnvVars)],
+    plugins: [
+      new webpack.DefinePlugin(portisEnvVars),
+      ...(Number(process.env.PORTIS_BUILD_SOURCE_MAPS) ? [new webpack.EvalSourceMapDevToolPlugin({})] : []),
+    ],
   },
 ];

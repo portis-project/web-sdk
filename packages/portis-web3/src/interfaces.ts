@@ -47,6 +47,7 @@ export interface ISDKConfig {
   defaultEmail?: string;
   scope?: Scope[];
   registerPageByDefault?: boolean;
+  staging?: boolean;
 }
 
 export type Scope = 'email';
