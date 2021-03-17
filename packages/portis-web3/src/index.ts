@@ -4,6 +4,7 @@ import { onWindowLoad } from './utils/onWindowLoad';
 import { validateSecureOrigin } from './utils/secureOrigin';
 import WidgetManager, { windowLoadHandler } from './widget/widgetManager';
 import Web3Manager from './web3/web3Manager';
+import StarkwareProvider from './starkware/starkwareProvider';
 
 const VERSION = '$$PORTIS_SDK_VERSION$$';
 
@@ -14,6 +15,7 @@ onWindowLoad().then(windowLoadHandler);
 export default class Portis {
   private _widgetManager: WidgetManager;
   private _web3Manager: Web3Manager;
+  private _starkwareProvider: StarkwareProvider;
   config: ISDKConfig;
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
@@ -30,6 +32,7 @@ export default class Portis {
 
     this._getWidgetCommunication = this._getWidgetCommunication.bind(this);
 
+    this._starkwareProvider = new StarkwareProvider();
     this._widgetManager = new WidgetManager(this.config, this._clearProviderSession);
     this._web3Manager = new Web3Manager(this.config, this._getWidgetCommunication);
   }
@@ -40,6 +43,10 @@ export default class Portis {
 
   private async _getWidgetCommunication() {
     return (await this._widgetManager.getWidget()).communication;
+  }
+
+  get starkwareProvider() {
+    return this._starkwareProvider;
   }
 
   get web3Provider() {
