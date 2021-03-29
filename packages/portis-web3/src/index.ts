@@ -39,9 +39,22 @@ class Portis {
     };
 
     this._getWidgetCommunication = this._getWidgetCommunication.bind(this);
-
     this._widgetManagerInstance = new WidgetManager(this.config, this._clearProviderSession);
     this._web3ManagerInstance = new Web3Manager(this.config, this._getWidgetCommunication);
+
+    this.setDefaultEmail = this.setDefaultEmail.bind(this);
+    this.changeNetwork = this.changeNetwork.bind(this);
+    this.getWidget = this.getWidget.bind(this);
+    this.onLogin = this.onLogin.bind(this);
+    this.onLogout = this.onLogout.bind(this);
+    this.onActiveWalletChanged = this.onActiveWalletChanged.bind(this);
+    this.onError = this.onError.bind(this);
+    this.showPortis = this.showPortis.bind(this);
+    this.getExtendedPublicKey = this.getExtendedPublicKey.bind(this);
+    this.importWallet = this.importWallet.bind(this);
+    this.isLoggedIn = this.isLoggedIn.bind(this);
+    this.signBitcoinTransaction = this.signBitcoinTransaction.bind(this);
+    this.showBitcoinWallet = this.showBitcoinWallet.bind(this);
   }
 
   get _widgetManager() {
