@@ -1,4 +1,4 @@
-import ProviderEngine from 'web3-provider-engine';
+const ProviderEngine = require('web3-provider-engine');
 const CacheSubprovider = require('web3-provider-engine/dist/es5/subproviders/cache.js');
 const FixtureSubprovider = require('web3-provider-engine/dist/es5/subproviders/fixture.js');
 const FilterSubprovider = require('web3-provider-engine/dist/es5/subproviders/filters.js');
@@ -43,7 +43,7 @@ class Portis {
   config: ISDKConfig;
   widgetPromise: Promise<IWidget>;
   widgetInstance: IWidget;
-  engine: ProviderEngine;
+  engine: typeof ProviderEngine;
   provider;
   private _selectedAddress: string;
   private _network: string;
