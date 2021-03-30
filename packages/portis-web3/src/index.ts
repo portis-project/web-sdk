@@ -6,6 +6,8 @@ const HookedWalletSubprovider = require('web3-provider-engine/dist/es5/subprovid
 const NonceSubprovider = require('web3-provider-engine/dist/es5/subproviders/nonce-tracker.js');
 const SubscriptionsSubprovider = require('web3-provider-engine/dist/es5/subproviders/subscriptions.js');
 import Penpal from 'penpal';
+import PocketJSCore from 'pocket-js-core';
+
 import { networkAdapter } from './networks';
 import { ISDKConfig, IConnectionMethods, INetwork, IOptions, IWidget, BTCSignTxSDKInput } from './interfaces';
 import { getTxGas } from './utils/getTxGas';
@@ -13,7 +15,7 @@ import { Query } from './utils/query';
 import { onWindowLoad } from './utils/onWindowLoad';
 import { styles } from './styles';
 import { validateSecureOrigin } from './utils/secureOrigin';
-import PocketJSCore from 'pocket-js-core';
+import { isClientSide } from './utils/isClientSide';
 
 const VERSION = '$$PORTIS_SDK_VERSION$$';
 // Create a .env file to override the default WIDGET_URL when running on
@@ -23,15 +25,21 @@ const SUPPORTED_SCOPES = ['email', 'reputation'];
 const PORTIS_IFRAME_CLASS = 'por_portis-widget-frame';
 const PORTIS_CONTAINER_CLASS = 'por_portis-container';
 
-onWindowLoad().then(() => {
-  if (document.getElementsByClassName(PORTIS_IFRAME_CLASS).length) {
-    console.warn(
-      'Portis script was already loaded. This might cause unexpected behavior. If loading with a <script> tag, please make sure that you only load it once.',
-    );
-  }
-});
+onWindowLoad()
+  .then(() => {
+    if (document.getElementsByClassName(PORTIS_IFRAME_CLASS).length) {
+      console.warn(
+        'Portis script was already loaded. This might cause unexpected behavior. If loading with a <script> tag, please make sure that you only load it once.',
+      );
+    }
+  })
+  .catch(() => {}); // Prevents unhandledPromiseRejectionWarning, which happens when using React SSR
 
-export default class Portis {
+class ServerSideRenderingEmptyClass {
+  constructor() {}
+}
+
+class Portis {
   config: ISDKConfig;
   widgetPromise: Promise<IWidget>;
   widgetInstance: IWidget;
@@ -497,3 +505,5 @@ export default class Portis {
     this.provider.addProvider(new subproviderType());
   }
 }
+
+export default (isClientSide() ? Portis : ServerSideRenderingEmptyClass);
