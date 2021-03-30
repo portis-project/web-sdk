@@ -1,0 +1,11 @@
+{
+  "entries": [
+    {
+      "filePath": "es/index.ts",
+      "outFile": "umd/index.d.ts",
+      "output": {
+        "umdModuleName": "portis"
+      }
+    }
+  ]
+}
