@@ -4,14 +4,21 @@ import { onWindowLoad } from './utils/onWindowLoad';
 import { validateSecureOrigin } from './utils/secureOrigin';
 import WidgetManager, { windowLoadHandler } from './widget/widgetManager';
 import Web3Manager from './web3/web3Manager';
+import { isClientSide } from './utils/isClientSide';
 
 const VERSION = '$$PORTIS_SDK_VERSION$$';
 
 const SUPPORTED_SCOPES = ['email', 'reputation'];
 
-onWindowLoad().then(windowLoadHandler);
+onWindowLoad()
+  .then(windowLoadHandler)
+  .catch(() => {}); // Prevents unhandledPromiseRejectionWarning, which happens when using React SSR;
 
-export default class Portis {
+class ServerSideRenderingEmptyClass {
+  constructor() {}
+}
+
+class Portis {
   private _widgetManager: WidgetManager;
   private _web3Manager: Web3Manager;
   config: ISDKConfig;
@@ -146,3 +153,5 @@ export default class Portis {
     }
   }
 }
+
+export default (isClientSide() ? Portis : ServerSideRenderingEmptyClass);
