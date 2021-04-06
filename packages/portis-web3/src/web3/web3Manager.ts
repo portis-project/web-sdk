@@ -11,11 +11,12 @@ import { getTxGas } from '../utils/getTxGas';
 import { Query } from '../utils/query';
 import { AsyncMethodReturns } from 'penpal';
 
+type ProviderCallback = (error: string | null, result: any) => void;
 export default class Web3Manager {
   private engine: typeof ProviderEngine;
-  provider;
-  private _selectedAddress: string;
-  private _network: string;
+  provider: typeof ProviderEngine;
+  private _selectedAddress?: string;
+  private _network?: string;
 
   constructor(
     private config: ISDKConfig,
@@ -24,7 +25,7 @@ export default class Web3Manager {
     this.provider = this._initProvider();
   }
 
-  setSelectedAddress(selectedAddress) {
+  setSelectedAddress(selectedAddress: string) {
     this._selectedAddress = selectedAddress;
   }
 
@@ -44,7 +45,7 @@ export default class Web3Manager {
     this.engine = new ProviderEngine();
     const query = new Query(this.engine);
 
-    this.engine.send = (payload, callback) => {
+    this.engine.send = (payload: any, callback: any) => {
       // Web3 1.0 beta.38 (and above) calls `send` with method and parameters
       if (typeof payload === 'string') {
         return new Promise((resolve, reject) => {
@@ -55,7 +56,7 @@ export default class Web3Manager {
               method: payload,
               params: callback || [],
             },
-            (error, response) => {
+            (error: any, response: any) => {
               if (error) {
                 reject(error);
               } else {
@@ -87,7 +88,7 @@ export default class Web3Manager {
           break;
 
         case 'eth_uninstallFilter':
-          this.engine.sendAsync(payload, _ => _);
+          this.engine.sendAsync(payload, (_: any) => _);
           result = true;
           break;
 
@@ -129,8 +130,8 @@ export default class Web3Manager {
 
     // set default id when needed
     this.engine.addProvider({
-      setEngine: _ => _,
-      handleRequest: async (payload, next, end) => {
+      setEngine: (_: any) => _,
+      handleRequest: async (payload: any, next: () => {}) => {
         if (!payload.id) {
           payload.id = 42;
         }
@@ -141,7 +142,7 @@ export default class Web3Manager {
     // main web3 functionality - carried out via widget communication
     this.engine.addProvider(
       new HookedWalletSubprovider({
-        getAccounts: async cb => {
+        getAccounts: async (cb: ProviderCallback) => {
           const widgetCommunication = await this._getWidgetCommunication();
           const { error, result } = await widgetCommunication.getAccounts(this.config);
           if (!error && result) {
@@ -149,48 +150,48 @@ export default class Web3Manager {
           }
           cb(error, result);
         },
-        signTransaction: async (txParams, cb) => {
+        signTransaction: async (txParams: any, cb: ProviderCallback) => {
           const widgetCommunication = await this._getWidgetCommunication();
           const { error, result } = await widgetCommunication.signTransaction(txParams, this.config);
           cb(error, result);
         },
-        signMessage: async (msgParams, cb) => {
+        signMessage: async (msgParams: any, cb: ProviderCallback) => {
           const widgetCommunication = await this._getWidgetCommunication();
           const params = { ...msgParams, messageStandard: 'signMessage' };
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
         },
-        signPersonalMessage: async (msgParams, cb) => {
+        signPersonalMessage: async (msgParams: any, cb: ProviderCallback) => {
           const widgetCommunication = await this._getWidgetCommunication();
           const params = { ...msgParams, messageStandard: 'signPersonalMessage' };
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
         },
-        signTypedMessage: async (msgParams, cb) => {
+        signTypedMessage: async (msgParams: any, cb: ProviderCallback) => {
           const widgetCommunication = await this._getWidgetCommunication();
           const params = { ...msgParams, messageStandard: 'signTypedMessage' };
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
         },
-        signTypedMessageV3: async (msgParams, cb) => {
+        signTypedMessageV3: async (msgParams: any, cb: ProviderCallback) => {
           const widgetCommunication = await this._getWidgetCommunication();
           const params = { ...msgParams, messageStandard: 'signTypedMessageV3' };
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
         },
-        estimateGas: async (txParams, cb) => {
+        estimateGas: async (txParams: any, cb: ProviderCallback) => {
           const gas = await getTxGas(query, txParams);
           cb(null, gas);
         },
-        getGasPrice: async cb => {
+        getGasPrice: async (cb: ProviderCallback) => {
           cb(null, '');
         },
       }),
     );
 
     this.engine.addProvider({
-      setEngine: _ => _,
-      handleRequest: async (payload, next, end) => {
+      setEngine: (_: any) => _,
+      handleRequest: async (payload: any, next: () => {}, end: (error: string | null, result: any) => {}) => {
         const widgetCommunication = await this._getWidgetCommunication();
         const { error, result } = await widgetCommunication.relay(payload, this.config);
         if (payload.method === 'net_version') {
@@ -203,7 +204,7 @@ export default class Web3Manager {
 
     this.engine.enable = () =>
       new Promise((resolve, reject) => {
-        this.engine.sendAsync({ method: 'eth_accounts' }, (error, response) => {
+        this.engine.sendAsync({ method: 'eth_accounts' }, (error: any, response: any) => {
           if (error) {
             reject(error);
           } else {
@@ -218,7 +219,7 @@ export default class Web3Manager {
 
     this.engine.isPortis = true;
 
-    this.engine.on('error', error => {
+    this.engine.on('error', (error: any) => {
       if (error && error.message && error.message.includes('PollingBlockTracker')) {
         console.warn('If you see this warning constantly, there might be an error with your RPC node.');
       } else {
@@ -230,8 +231,8 @@ export default class Web3Manager {
     return this.engine;
   }
 
-  private clearSubprovider(subproviderType) {
-    const subprovider = this.provider._providers.find(subprovider => subprovider instanceof subproviderType);
+  private clearSubprovider(subproviderType: any) {
+    const subprovider = this.provider._providers.find((subprovider: any) => subprovider instanceof subproviderType);
     this.provider.removeProvider(subprovider);
     this.provider.addProvider(new subproviderType());
   }

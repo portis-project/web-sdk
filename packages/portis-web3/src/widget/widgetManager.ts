@@ -20,13 +20,13 @@ export function windowLoadHandler() {
 }
 
 export default class WidgetManager {
-  private widgetPromise: Promise<IWidget>;
-  private widgetInstance: IWidget;
+  private widgetPromise?: Promise<IWidget>;
+  private widgetInstance?: IWidget;
   private _widgetUrl = WIDGET_URL;
-  private _onLoginCallback: (walletAddress: string, email?: string, reputation?: string) => void;
-  private _onLogoutCallback: () => void;
-  private _onActiveWalletChangedCallback: (walletAddress: string) => void;
-  private _onErrorCallback: (error: Error) => void;
+  private _onLoginCallback: (walletAddress: string, email?: string, reputation?: string) => void = () => {};
+  private _onLogoutCallback: () => void = () => {};
+  private _onActiveWalletChangedCallback: (walletAddress: string) => void = () => {};
+  private _onErrorCallback: (error: Error) => void = () => {};
 
   constructor(private _widgetConfig: ISDKConfig, private _clearProviderSession: () => void) {
     validateSecureOrigin();
