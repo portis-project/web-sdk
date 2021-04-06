@@ -35,11 +35,18 @@ onWindowLoad()
   })
   .catch(() => {}); // Prevents unhandledPromiseRejectionWarning, which happens when using React SSR
 
-class ServerSideRenderingEmptyClass {
-  constructor() {}
-}
+const mockify = <T extends {}>(obj: T): T =>
+  new Proxy(obj, {
+    get: (target, prop) => {
+      if (target[prop] instanceof Function) {
+        return () => {};
+      } else {
+        return undefined;
+      }
+    },
+  }) as T;
 
-class Portis {
+export class Portis {
   config: ISDKConfig;
   widgetPromise: Promise<IWidget>;
   widgetInstance: IWidget;
@@ -54,6 +61,12 @@ class Portis {
   private _onErrorCallback: (error: Error) => void;
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
+    // If rendered in SSR, return a mock version of the Portis object.
+    // All methods are callable and all properties exist, but they do nothing.
+    if (!isClientSide()) {
+      return mockify<Portis>(this);
+    }
+
     validateSecureOrigin();
     this._checkIfWidgetAlreadyInitialized();
     this._validateParams(dappId, network, options);
@@ -65,6 +78,7 @@ class Portis {
       registerPageByDefault: options.registerPageByDefault,
     };
     this.provider = this._initProvider(options);
+    return this;
   }
 
   changeNetwork(network: string | INetwork, gasRelay?: boolean) {
@@ -506,4 +520,4 @@ class Portis {
   }
 }
 
-export default (isClientSide() ? Portis : ServerSideRenderingEmptyClass);
+export default Portis;
