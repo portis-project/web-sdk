@@ -1,5 +1,4 @@
-import ProviderEngine from 'web3-provider-engine';
-
+const ProviderEngine = require('web3-provider-engine');
 const CacheSubprovider = require('web3-provider-engine/dist/es5/subproviders/cache.js');
 const FixtureSubprovider = require('web3-provider-engine/dist/es5/subproviders/fixture.js');
 const FilterSubprovider = require('web3-provider-engine/dist/es5/subproviders/filters.js');
@@ -13,7 +12,7 @@ import { Query } from '../utils/query';
 import { AsyncMethodReturns } from 'penpal';
 
 export default class Web3Manager {
-  private engine: ProviderEngine;
+  private engine: typeof ProviderEngine;
   provider;
   private _selectedAddress: string;
   private _network: string;
