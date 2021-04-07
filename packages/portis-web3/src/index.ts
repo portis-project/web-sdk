@@ -5,6 +5,7 @@ import { validateSecureOrigin } from './utils/secureOrigin';
 import WidgetManager, { windowLoadHandler } from './widget/widgetManager';
 import Web3Manager from './web3/web3Manager';
 import { isClientSide } from './utils/isClientSide';
+import { mockify } from './utils/mockify';
 
 const VERSION = '$$PORTIS_SDK_VERSION$$';
 
@@ -14,16 +15,18 @@ onWindowLoad()
   .then(windowLoadHandler)
   .catch(() => {}); // Prevents unhandledPromiseRejectionWarning, which happens when using React SSR;
 
-class ServerSideRenderingEmptyClass {
-  constructor() {}
-}
-
 class Portis {
   private _widgetManager: WidgetManager;
   private _web3Manager: Web3Manager;
   config: ISDKConfig;
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
+    // If rendered in SSR, return a mock version of the Portis object.
+    // All methods are callable and all properties exist, but they do nothing.
+    if (!isClientSide()) {
+      return mockify<Portis>(this);
+    }
+
     validateSecureOrigin();
     this._validateParams(dappId, network, options);
     this.config = {
@@ -154,4 +157,4 @@ class Portis {
   }
 }
 
-export default (isClientSide() ? Portis : ServerSideRenderingEmptyClass);
+export default Portis;
