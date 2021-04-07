@@ -150,3 +150,5 @@ export type BTCInputScriptType = 'p2pkh' | 'p2sh' | 'external' | 'p2wpkh' | 'p2s
 export type BTCOutputScriptType = 'p2pkh' | 'p2sh' | 'p2wpkh' | 'p2sh-p2wpkh';
 
 export type BTCOutputAddressType = 'spend' | 'transfer' | 'change' | 'exchange';
+
+export default null;

@@ -5,6 +5,7 @@ import { validateSecureOrigin } from './utils/secureOrigin';
 import WidgetManager, { windowLoadHandler } from './widget/widgetManager';
 import Web3Manager from './web3/web3Manager';
 import { isClientSide } from './utils/isClientSide';
+import { mockify } from './utils/mockify';
 
 const VERSION = '$$PORTIS_SDK_VERSION$$';
 
@@ -13,17 +14,6 @@ const SUPPORTED_SCOPES = ['email', 'reputation'];
 onWindowLoad()
   .then(windowLoadHandler)
   .catch(() => {}); // Prevents unhandledPromiseRejectionWarning, which happens when using React SSR;
-
-const mockify = <T extends {}>(obj: T): T =>
-  new Proxy(obj, {
-    get: (target, prop) => {
-      if (target[prop] instanceof Function) {
-        return () => {};
-      } else {
-        return undefined;
-      }
-    },
-  }) as T;
 
 class Portis {
   private _widgetManager: WidgetManager;
