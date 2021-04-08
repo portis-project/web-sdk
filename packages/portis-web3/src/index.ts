@@ -1,5 +1,5 @@
 import { networkAdapter } from './networks';
-import { INetwork, IOptions, BTCSignTxSDKInput, ISDKConfig } from './interfaces';
+import { INetwork, IOptions, BTCSignTxSDKInput, ISDKConfig, IWidget } from './interfaces';
 import { onWindowLoad } from './utils/onWindowLoad';
 import { validateSecureOrigin } from './utils/secureOrigin';
 import WidgetManager, { windowLoadHandler } from './widget/widgetManager';
@@ -16,9 +16,9 @@ onWindowLoad()
   .catch(() => {}); // Prevents unhandledPromiseRejectionWarning, which happens when using React SSR;
 
 class Portis {
-  private _widgetManager: WidgetManager;
-  private _web3Manager: Web3Manager;
-  config: ISDKConfig;
+  private _widgetManagerInstance?: WidgetManager;
+  private _web3ManagerInstance?: Web3Manager;
+  private _config?: ISDKConfig;
 
   constructor(dappId: string, network: string | INetwork, options: IOptions = {}) {
     // If rendered in SSR, return a mock version of the Portis object.
@@ -29,7 +29,7 @@ class Portis {
 
     validateSecureOrigin();
     this._validateParams(dappId, network, options);
-    this.config = {
+    this._config = {
       dappId,
       network: networkAdapter(network, options.gasRelay),
       version: VERSION,
@@ -40,8 +40,20 @@ class Portis {
 
     this._getWidgetCommunication = this._getWidgetCommunication.bind(this);
 
-    this._widgetManager = new WidgetManager(this.config, this._clearProviderSession);
-    this._web3Manager = new Web3Manager(this.config, this._getWidgetCommunication);
+    this._widgetManagerInstance = new WidgetManager(this.config, this._clearProviderSession);
+    this._web3ManagerInstance = new Web3Manager(this.config, this._getWidgetCommunication);
+  }
+
+  get _widgetManager() {
+    return this._widgetManagerInstance!;
+  }
+
+  get _web3Manager() {
+    return this._web3ManagerInstance!;
+  }
+
+  get config() {
+    return this._config!;
   }
 
   private _clearProviderSession() {
@@ -70,7 +82,7 @@ class Portis {
   }
 
   // async singleton
-  async getWidget() {
+  async getWidget(): Promise<IWidget> {
     return this._widgetManager.getWidget();
   }
 

@@ -3,7 +3,10 @@ import { Query } from './query';
 const { addHexPrefix, stripHexPrefix, BN } = require('ethereumjs-util');
 const SIMPLE_GAS_COST = '0x5208'; // Hex for 21000, cost of a simple send.
 
-export async function getTxGas(query: Query, txParams) {
+type TxParams = any;
+type GasHex = string;
+
+export async function getTxGas(query: Query, txParams: any) {
   const block = await query.getBlockByNumber('latest', false);
   const { safeGas, simpleSend, gasLimitSpecified } = await safeTxGas(query, txParams, block.gasLimit);
 
@@ -19,7 +22,7 @@ export async function getTxGas(query: Query, txParams) {
   }
 }
 
-async function safeTxGas(query: Query, txParams, blockGasLimitHex) {
+async function safeTxGas(query: Query, txParams: TxParams, blockGasLimitHex: GasHex) {
   // check if gasLimit is already specified
   const gasLimitSpecified = Boolean(txParams.gas);
 
@@ -55,13 +58,13 @@ async function safeTxGas(query: Query, txParams, blockGasLimitHex) {
   return { safeGas: bnToHex(saferGasLimitBN), simpleSend: false, gasLimitSpecified: false };
 }
 
-async function estimateTxGas(query: Query, txParams, blockGasLimitHex, safeGas) {
+async function estimateTxGas(query: Query, txParams: TxParams, blockGasLimitHex: GasHex, safeGas: GasHex) {
   txParams.gas = safeGas;
   const estimatedGas = addHexPrefix(await query.estimateGas(txParams));
   return addGasBuffer(estimatedGas, blockGasLimitHex);
 }
 
-function addGasBuffer(initialGasLimitHex, blockGasLimitHex) {
+function addGasBuffer(initialGasLimitHex: GasHex, blockGasLimitHex: GasHex) {
   const initialGasLimitBn = hexToBn(initialGasLimitHex);
   const blockGasLimitBn = hexToBn(blockGasLimitHex);
   const upperGasLimitBn = blockGasLimitBn.muln(0.9);
@@ -75,15 +78,15 @@ function addGasBuffer(initialGasLimitHex, blockGasLimitHex) {
   return bnToHex(upperGasLimitBn);
 }
 
-function hexToBn(inputHex) {
+function hexToBn(inputHex: GasHex) {
   return new BN(stripHexPrefix(inputHex), 16);
 }
 
-function bnToHex(inputBn) {
+function bnToHex(inputBn: typeof BN) {
   return addHexPrefix(inputBn.toString(16));
 }
 
-function BnMultiplyByFraction(targetBN, numerator, denominator) {
+function BnMultiplyByFraction(targetBN: typeof BN, numerator: typeof BN, denominator: typeof BN) {
   const numBN = new BN(numerator);
   const denomBN = new BN(denominator);
   return targetBN.mul(numBN).div(denomBN);
