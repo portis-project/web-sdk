@@ -1,5 +1,5 @@
 export class Query {
-  constructor(private provider) {}
+  constructor(private provider: any) {}
 
   getBlockByNumber(blockNumber: string, fullTransaction: boolean) {
     return this.sendAsync('eth_getBlockByNumber', blockNumber, fullTransaction);
@@ -13,7 +13,7 @@ export class Query {
     return this.sendAsync('eth_estimateGas', txParams);
   }
 
-  private sendAsync(methodName: string, ...args) {
+  private sendAsync(methodName: string, ...args: any[]) {
     return new Promise<any>((resolve, reject) => {
       this.provider.sendAsync(
         {
@@ -22,7 +22,7 @@ export class Query {
           method: methodName,
           params: args,
         },
-        (error, response) => {
+        (error: any, response: any) => {
           if (error) {
             reject(error);
           } else {
