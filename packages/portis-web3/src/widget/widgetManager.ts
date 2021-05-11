@@ -79,7 +79,7 @@ export default class WidgetManager {
 
   async getCampaignInfo(campaignId: string) {
     const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.logout(); // .getCampaignInfo() placeholder - this is not building?
+    return widgetCommunication.logout(); // .getCampaignInfo(campaignId); // placeholder - this is not building?
   }
 
   async logout() {
