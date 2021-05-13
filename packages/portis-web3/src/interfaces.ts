@@ -6,13 +6,11 @@ export interface INetwork {
   gasRelayHubAddress?: string;
 }
 
-
 export interface ICampaignInfo {
   maxAmount: number;
   campaignDateStart: number;
   campaignDateEnd: number;
 }
-
 
 export interface IConnectionMethods {
   getAccounts: (config: ISDKConfig) => Promise<{ error: string; result: string[] }>;
@@ -23,7 +21,7 @@ export interface IConnectionMethods {
   importWallet: (mnemonicOrPrivateKey: string, config: ISDKConfig) => Promise<void>;
   getExtendedPublicKey: (path: string, coin: string, config: ISDKConfig) => Promise<{ error: string; result: string }>;
   logout: () => Promise<{ error: string; result: boolean }>;
-  getCampaignInfo: (campaignId: string) => Promise<{ error: string; result: ICampaignInfo }>;
+  getCampaignInfo: (campaignId: string) => Promise<{ error: string; result: string }>; // TODO: result should be ICampaignInfo
   isLoggedIn: () => Promise<{ error: string; result: boolean }>;
   signBitcoinTransaction: (
     params: {
