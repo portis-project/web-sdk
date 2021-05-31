@@ -84,7 +84,7 @@ export default class WidgetManager {
 
   async claimVoucher(voucherId: string) {
     const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.claimVoucher(voucherId, this._widgetConfig);
+    return widgetCommunication.claimVoucher(voucherId);
   }
 
   async logout() {
