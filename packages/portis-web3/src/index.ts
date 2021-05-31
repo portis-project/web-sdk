@@ -51,6 +51,7 @@ class Portis {
     this.onError = this.onError.bind(this);
     this.showPortis = this.showPortis.bind(this);
     this.getCampaignInfo = this.getCampaignInfo.bind(this);
+    this.claimVoucher = this.claimVoucher.bind(this);
     this.getExtendedPublicKey = this.getExtendedPublicKey.bind(this);
     this.importWallet = this.importWallet.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
@@ -126,6 +127,10 @@ class Portis {
 
   async getCampaignInfo(campaignId: string) {
     return this._widgetManager.getCampaignInfo(campaignId);
+  }
+
+  async claimVoucher(voucherId: string) {
+    return this._widgetManager.claimVoucher(voucherId);
   }
 
   async logout() {

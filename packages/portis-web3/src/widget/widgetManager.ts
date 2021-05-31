@@ -82,6 +82,11 @@ export default class WidgetManager {
     return widgetCommunication.getCampaignInfo(campaignId);
   }
 
+  async claimVoucher(voucherId: string) {
+    const widgetCommunication = (await this.getWidget()).communication;
+    return widgetCommunication.claimVoucher(voucherId);
+  }
+
   async logout() {
     const widgetCommunication = (await this.getWidget()).communication;
     return widgetCommunication.logout();

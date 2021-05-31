@@ -22,6 +22,7 @@ export interface IConnectionMethods {
   getExtendedPublicKey: (path: string, coin: string, config: ISDKConfig) => Promise<{ error: string; result: string }>;
   logout: () => Promise<{ error: string; result: boolean }>;
   getCampaignInfo: (campaignId: string) => Promise<{ error: string; result: string }>; // TODO: result should be ICampaignInfo
+  claimVoucher: (voucherId: string) => Promise<{ error: string; result: string }>;
   isLoggedIn: () => Promise<{ error: string; result: boolean }>;
   signBitcoinTransaction: (
     params: {
