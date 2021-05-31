@@ -1,8 +1,0 @@
-.vscode/*
-npm-debug.log
-.DS_Store
-Thumbs.db
-node_modules
-umd
-es
-lib
