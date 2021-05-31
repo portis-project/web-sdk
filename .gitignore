@@ -2,7 +2,9 @@
 npm-debug.log
 .DS_Store
 Thumbs.db
-.db
 node_modules
-lerna-debug.log
-.idea
+umd
+es
+lib
+*.code-workspace
+.env
