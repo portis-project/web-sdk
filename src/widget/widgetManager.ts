@@ -77,16 +77,6 @@ export default class WidgetManager {
     return widgetCommunication.showPortis(this._widgetConfig);
   }
 
-  async getCampaignInfo(campaignId: string) {
-    const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.getCampaignInfo(campaignId);
-  }
-
-  async claimVoucher(voucherId: string) {
-    const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.claimVoucher(voucherId);
-  }
-
   async logout() {
     const widgetCommunication = (await this.getWidget()).communication;
     return widgetCommunication.logout();
