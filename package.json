@@ -1,6 +1,6 @@
 {
   "name": "@portis/web3",
-  "version": "4.0.0",
+  "version": "4.0.2",
   "description": "Portis Web3 SDK",
   "main": "lib/index.js",
   "module": "es/index.js",
