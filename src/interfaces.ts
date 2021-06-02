@@ -21,8 +21,8 @@ export interface IConnectionMethods {
   importWallet: (mnemonicOrPrivateKey: string, config: ISDKConfig) => Promise<void>;
   getExtendedPublicKey: (path: string, coin: string, config: ISDKConfig) => Promise<{ error: string; result: string }>;
   logout: () => Promise<{ error: string; result: boolean }>;
-  getCampaignInfo: (campaignId: string) => Promise<{ error: string; result: string }>; // TODO: result should be ICampaignInfo
-  claimVoucher: (voucherId: string, config: ISDKConfig) => Promise<{ error: string; result: string }>;
+  getCampaignInfo: (campaignId: string) => Promise<{ error: string; result: any }>; // TODO: result should be ICampaignInfo
+  claimVoucher: (voucherId: string, config: ISDKConfig) => Promise<{ error: string; result: any }>;
   isLoggedIn: () => Promise<{ error: string; result: boolean }>;
   signBitcoinTransaction: (
     params: {
