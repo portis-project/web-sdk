@@ -23,9 +23,9 @@ index 75576ec..2077f04 100644
            return self.validateTypedMessage(msgParams, cb);
          }, function (cb) {
 -          return self.processTypedMessage(msgParams, cb);
-+          return payload.method === 'eth_signTypedData_v3'
-+            ? self.processTypedMessageV3(msgParams, cb)
-+            : self.processTypedMessage(msgParams, cb);
++          return payload.method === 'eth_signTypedData'
++            ? self.processTypedMessage(msgParams, cb)
++            : self.processTypedMessageV3(msgParams, cb);
          }], end);
        }();
  
