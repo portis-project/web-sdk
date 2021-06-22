@@ -43,7 +43,7 @@ const networks: { [key: string]: INetwork } = {
     gasRelayHubAddress: '0xD216153c06E857cD7f72665E0aF1d7D82172F494',
   },
   goerli: {
-    nodeUrl: 'https://goerli.prylabs.net',
+    nodeUrl: 'https://goerli.infura.io/v3/faa4639b090f46499f29d894da0551a0',
     chainId: '5',
   },
   ubiq: {
