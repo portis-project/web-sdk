@@ -1,5 +1,5 @@
 import { networkAdapter } from './networks';
-import { INetwork, IOptions, BTCSignTxSDKInput, ISDKConfig, IWidget } from './interfaces';
+import { INetwork, IOptions, BTCSignTxSDKInput, ISDKConfig, IWidget, TokenPurchaseParams } from './interfaces';
 import { onWindowLoad } from './utils/onWindowLoad';
 import { validateSecureOrigin } from './utils/secureOrigin';
 import WidgetManager, { windowLoadHandler } from './widget/widgetManager';
@@ -57,6 +57,7 @@ class Portis {
     this.isLoggedIn = this.isLoggedIn.bind(this);
     this.signBitcoinTransaction = this.signBitcoinTransaction.bind(this);
     this.showBitcoinWallet = this.showBitcoinWallet.bind(this);
+    this.tokenPurchase = this.tokenPurchase.bind(this);
   }
 
   get _widgetManager() {
@@ -155,6 +156,10 @@ class Portis {
 
   async showBitcoinWallet(path: string = "m/49'/0'/0'/0/0") {
     return this._widgetManager.showBitcoinWallet(path);
+  }
+
+  async tokenPurchase(params: TokenPurchaseParams) {
+    return this._widgetManager.tokenPurchase(params);
   }
 
   // internal methods

@@ -42,6 +42,7 @@ export interface IConnectionMethods {
   }>;
   showBitcoinWallet: (path: string, config: ISDKConfig) => Promise<void>;
   setSdkConfig: (config: ISDKConfig) => Promise<void>;
+  tokenPurchase: (params: TokenPurchaseParams, config: ISDKConfig) => Promise<void>;
 }
 
 export interface IWidget {
@@ -158,5 +159,10 @@ export type BTCInputScriptType = 'p2pkh' | 'p2sh' | 'external' | 'p2wpkh' | 'p2s
 export type BTCOutputScriptType = 'p2pkh' | 'p2sh' | 'p2wpkh' | 'p2sh-p2wpkh';
 
 export type BTCOutputAddressType = 'spend' | 'transfer' | 'change' | 'exchange';
+
+export interface TokenPurchaseParams {
+  contract_address: string,
+  amountToPurchase: number;
+}
 
 export default null;
