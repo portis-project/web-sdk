@@ -161,7 +161,7 @@ export type BTCOutputScriptType = 'p2pkh' | 'p2sh' | 'p2wpkh' | 'p2sh-p2wpkh';
 export type BTCOutputAddressType = 'spend' | 'transfer' | 'change' | 'exchange';
 
 export interface TokenPurchaseParams {
-  contract_address: string,
+  contractAddress: string,
   amountToPurchase: number;
 }
 
