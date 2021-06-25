@@ -1,5 +1,5 @@
 import Penpal from 'penpal';
-import { ISDKConfig, IConnectionMethods, IWidget, BTCSignTxSDKInput, TokenPurchaseParams } from '../interfaces';
+import { ISDKConfig, IConnectionMethods, IWidget, BTCSignTxSDKInput, PurchaseERC20Params } from '../interfaces';
 
 import { onWindowLoad } from '../utils/onWindowLoad';
 import { styles } from '../styles';
@@ -117,9 +117,9 @@ export default class WidgetManager {
     return widgetCommunication.showBitcoinWallet(path, this._widgetConfig);
   }
 
-  async tokenPurchase(params: TokenPurchaseParams) {
+  async purchaseERC20(params: PurchaseERC20Params) {
     const widgetCommunication = (await this.getWidget()).communication;
-    return widgetCommunication.tokenPurchase(params, this._widgetConfig);
+    return widgetCommunication.purchaseERC20(params, this._widgetConfig);
   }
 
   // internal methods

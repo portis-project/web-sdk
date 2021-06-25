@@ -42,7 +42,7 @@ export interface IConnectionMethods {
   }>;
   showBitcoinWallet: (path: string, config: ISDKConfig) => Promise<void>;
   setSdkConfig: (config: ISDKConfig) => Promise<void>;
-  tokenPurchase: (params: TokenPurchaseParams, config: ISDKConfig) => Promise<void>;
+  purchaseERC20: (params: PurchaseERC20Params, config: ISDKConfig) => Promise<void>;
 }
 
 export interface IWidget {
@@ -160,9 +160,9 @@ export type BTCOutputScriptType = 'p2pkh' | 'p2sh' | 'p2wpkh' | 'p2sh-p2wpkh';
 
 export type BTCOutputAddressType = 'spend' | 'transfer' | 'change' | 'exchange';
 
-export interface TokenPurchaseParams {
+export interface PurchaseERC20Params {
   contractAddress: string,
-  amountToPurchase: number;
+  qty: number;
 }
 
 export default null;
