@@ -1,5 +1,5 @@
 import { networkAdapter } from './networks';
-import { INetwork, IOptions, BTCSignTxSDKInput, ISDKConfig, IWidget, PurchaseERC20Params } from './interfaces';
+import { INetwork, IOptions, BTCSignTxSDKInput, ISDKConfig, IWidget } from './interfaces';
 import { onWindowLoad } from './utils/onWindowLoad';
 import { validateSecureOrigin } from './utils/secureOrigin';
 import WidgetManager, { windowLoadHandler } from './widget/widgetManager';
@@ -158,8 +158,8 @@ class Portis {
     return this._widgetManager.showBitcoinWallet(path);
   }
 
-  async purchaseERC20(params: PurchaseERC20Params) {
-    return this._widgetManager.purchaseERC20(params);
+  async purchaseERC20(tokenAddress: string, amount: string, logoURL?: string) {
+    return this._widgetManager.purchaseERC20({tokenAddress, amount, logoURL});
   }
 
   // internal methods
