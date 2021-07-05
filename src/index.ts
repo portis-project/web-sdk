@@ -57,6 +57,7 @@ class Portis {
     this.isLoggedIn = this.isLoggedIn.bind(this);
     this.signBitcoinTransaction = this.signBitcoinTransaction.bind(this);
     this.showBitcoinWallet = this.showBitcoinWallet.bind(this);
+    this.purchaseERC20 = this.purchaseERC20.bind(this);
   }
 
   get _widgetManager() {
@@ -155,6 +156,10 @@ class Portis {
 
   async showBitcoinWallet(path: string = "m/49'/0'/0'/0/0") {
     return this._widgetManager.showBitcoinWallet(path);
+  }
+
+  async purchaseERC20(tokenAddress: string, amount: string, logoURL?: string) {
+    return this._widgetManager.purchaseERC20({tokenAddress, amount, logoURL});
   }
 
   // internal methods
