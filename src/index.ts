@@ -158,8 +158,8 @@ class Portis {
     return this._widgetManager.showBitcoinWallet(path);
   }
 
-  async purchaseERC20(tokenAddress: string, amount: string, logoURL?: string) {
-    return this._widgetManager.purchaseERC20({tokenAddress, amount, logoURL});
+  async purchaseERC20(tokenAddress: string, amount: string, tokenSymbol: string, logoURL?: string) {
+    return this._widgetManager.purchaseERC20({tokenAddress, amount, tokenSymbol, logoURL});
   }
 
   // internal methods
