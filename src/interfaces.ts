@@ -163,6 +163,7 @@ export type BTCOutputAddressType = 'spend' | 'transfer' | 'change' | 'exchange';
 export interface IPurchaseERC20Params {
   tokenAddress: string,
   amount: string;
+  tokenSymbol: string;
   logoURL?: string | undefined,
 }
 
