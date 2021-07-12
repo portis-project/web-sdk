@@ -57,7 +57,7 @@ class Portis {
     this.isLoggedIn = this.isLoggedIn.bind(this);
     this.signBitcoinTransaction = this.signBitcoinTransaction.bind(this);
     this.showBitcoinWallet = this.showBitcoinWallet.bind(this);
-    this.purchaseERC20 = this.purchaseERC20.bind(this);
+    // this.purchaseERC20 = this.purchaseERC20.bind(this);
   }
 
   get _widgetManager() {
