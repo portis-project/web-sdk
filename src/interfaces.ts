@@ -54,7 +54,6 @@ export interface ISDKConfig {
   version: string;
   defaultEmail?: string;
   scope?: Scope[];
-  registerPageByDefault?: boolean;
   staging?: boolean;
 }
 
@@ -63,7 +62,6 @@ export type Scope = 'email';
 export interface IOptions {
   scope?: Scope[];
   gasRelay?: boolean;
-  registerPageByDefault?: boolean;
   pocketDevId?: string;
   staging?: boolean;
 }

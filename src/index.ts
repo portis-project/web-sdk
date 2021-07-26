@@ -34,7 +34,6 @@ class Portis {
       network: networkAdapter(network, options.gasRelay),
       version: VERSION,
       scope: options.scope,
-      registerPageByDefault: options.registerPageByDefault,
       staging: options.staging,
     };
 
@@ -182,12 +181,6 @@ class Portis {
           "[Portis] invalid 'scope' parameter. Read more about it here: https://docs.portis.io/#/configuration?id=scope",
         );
       }
-    }
-
-    if (options.registerPageByDefault !== undefined && typeof options.registerPageByDefault !== 'boolean') {
-      throw new Error(
-        "[Portis] invalid 'registerPageByDefault' parameter, must be a boolean. Read more about it here: https://docs.portis.io/#/configuration?id=registerPageByDefault",
-      );
     }
   }
 }
