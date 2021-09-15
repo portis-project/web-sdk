@@ -28,22 +28,22 @@ export function networkAdapter(network: string | INetwork, gasRelay?: boolean) {
 
 const networks: { [key: string]: INetwork } = {
   mainnet: {
-    nodeUrl: 'https://mainnet.infura.io/v3/faa4639b090f46499f29d894da0551a0',
+    nodeUrl: 'https://eth-mainnet.gateway.pokt.network/v1/lb/61391a62a2d82e0037c1a204',
     chainId: '1',
     gasRelayHubAddress: '0xD216153c06E857cD7f72665E0aF1d7D82172F494',
   },
   ropsten: {
-    nodeUrl: 'https://ropsten.infura.io/v3/faa4639b090f46499f29d894da0551a0',
+    nodeUrl: 'https://eth-ropsten.gateway.pokt.network/v1/lb/61391abba2d82e0037c1a458',
     chainId: '3',
     gasRelayHubAddress: '0xD216153c06E857cD7f72665E0aF1d7D82172F494',
   },
   rinkeby: {
-    nodeUrl: 'https://rinkeby.infura.io/v3/faa4639b090f46499f29d894da0551a0',
+    nodeUrl: 'https://eth-rinkeby.gateway.pokt.network/v1/lb/61391b30a2d82e0037c1a7fc',
     chainId: '4',
     gasRelayHubAddress: '0xD216153c06E857cD7f72665E0aF1d7D82172F494',
   },
   goerli: {
-    nodeUrl: 'https://goerli.infura.io/v3/faa4639b090f46499f29d894da0551a0',
+    nodeUrl: 'https://eth-goerli.gateway.pokt.network/v1/lb/61391c2ca2d82e0037c1afc2',
     chainId: '5',
   },
   ubiq: {
@@ -80,7 +80,7 @@ const networks: { [key: string]: INetwork } = {
     chainId: '99',
   },
   xdai: {
-    nodeUrl: 'https://dai.poa.network',
+    nodeUrl: 'https://poa-xdai.gateway.pokt.network/v1/lb/61391c7ea2d82e0037c1b20f',
     chainId: '100',
     gasRelayHubAddress: '0xD216153c06E857cD7f72665E0aF1d7D82172F494',
   },
@@ -89,7 +89,7 @@ const networks: { [key: string]: INetwork } = {
     chainId: '108',
   },
   fuse: {
-    nodeUrl: 'https://rpc.fusenet.io',
+    nodeUrl: 'https://fuse-mainnet.gateway.pokt.network/v1/lb/61391ccca2d82e0037c1b46e',
     chainId: '122',
   },
   lightstreams: {
@@ -97,7 +97,7 @@ const networks: { [key: string]: INetwork } = {
     chainId: '163',
   },
   matic: {
-    nodeUrl: 'https://rpc-mainnet.matic.network',
+    nodeUrl: 'https://poly-mainnet.gateway.pokt.network/v1/lb/61391e68a2d82e0037c1b9e7',
     chainId: '137',
   },
   maticMumbai: {
