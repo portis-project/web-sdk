@@ -165,6 +165,7 @@ export default class WidgetManager {
     const communication = await connection.promise;
     communication.setSdkConfig(this._widgetConfig);
     connection.iframe.style.position = 'absolute';
+    connection.iframe.setAttribute('loading', 'eager')
     connection.iframe.style.height = '100%';
     connection.iframe.style.width = '100%';
     connection.iframe.style.border = '0 transparent';
