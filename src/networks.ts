@@ -97,7 +97,7 @@ const networks: { [key: string]: INetwork } = {
     chainId: '163',
   },
   matic: {
-    nodeUrl: 'https://rpc-mainnet.matic.network',
+    nodeUrl: 'https://polygon-rpc.com',
     chainId: '137',
   },
   maticMumbai: {
