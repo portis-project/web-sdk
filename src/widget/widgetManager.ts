@@ -25,7 +25,7 @@ export default class WidgetManager {
   private _widgetUrl = WIDGET_URL;
   private _onLoginCallback: (walletAddress: string, email?: string, reputation?: string) => void = () => {};
   private _onLogoutCallback: () => void = () => {};
-  private _onActiveWalletChangedCallback: (walletAddress: string) => void = () => {};
+  private _onActiveWalletChangedCallback?: (walletAddress: string) => void;
   private _onErrorCallback: (error: Error) => void = () => {};
 
   constructor(private _widgetConfig: ISDKConfig, private _clearProviderSession: () => void) {
@@ -158,6 +158,7 @@ export default class WidgetManager {
         onLogin: this._onLogin.bind(this),
         onLogout: this._onLogout.bind(this),
         onActiveWalletChanged: this._onActiveWalletChanged.bind(this),
+        hasOnActiveWalletChanged: this.hasOnActiveWalletChanged.bind(this),
         onError: this._onError.bind(this),
       },
     });
@@ -201,6 +202,10 @@ export default class WidgetManager {
     if (this._onActiveWalletChangedCallback) {
       this._onActiveWalletChangedCallback(walletAddress);
     }
+  }
+
+  private hasOnActiveWalletChanged(): boolean {
+    return !!this._onActiveWalletChangedCallback;
   }
 
   private _onError(error: Error) {
