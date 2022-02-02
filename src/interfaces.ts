@@ -57,6 +57,7 @@ export interface ISDKConfig {
   scope?: Scope[];
   registerPageByDefault?: boolean;
   staging?: boolean;
+  feature?: boolean;
 }
 
 export type Scope = 'email';
@@ -67,6 +68,7 @@ export interface IOptions {
   registerPageByDefault?: boolean;
   pocketDevId?: string;
   staging?: boolean;
+  feature?: boolean;
 }
 
 export interface ITransactionRequest {
