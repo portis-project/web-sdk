@@ -36,6 +36,7 @@ class Portis {
       scope: options.scope,
       registerPageByDefault: options.registerPageByDefault,
       staging: options.staging,
+      feature: options.feature,
     };
 
     this._getWidgetCommunication = this._getWidgetCommunication.bind(this);

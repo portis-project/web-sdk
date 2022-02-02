@@ -8,6 +8,7 @@ import { validateSecureOrigin } from '../utils/secureOrigin';
 // Create a .env file to override the default WIDGET_URL when running locally
 const WIDGET_URL = process.env.PORTIS_WIDGET_URL || 'https://widget.portis.io';
 const STAGING_WIDGET_URL = 'https://widget-staging.portis.io';
+const FEATURE_WIDGET_URL = 'https://widget-feature.portis.io';
 const PORTIS_IFRAME_CLASS = 'por_portis-widget-frame';
 const PORTIS_CONTAINER_CLASS = 'por_portis-container';
 
@@ -33,6 +34,9 @@ export default class WidgetManager {
     if (_widgetConfig.staging) {
       console.warn('Please note: you are using the Portis STAGING environment.');
       this._widgetUrl = STAGING_WIDGET_URL;
+    } else if (_widgetConfig.feature) {
+      console.warn('Please note: you are using the Portis FEATURE environment.');
+      this._widgetUrl = FEATURE_WIDGET_URL;
     }
     WidgetManager._checkIfWidgetAlreadyInitialized();
   }
