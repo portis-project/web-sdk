@@ -48,7 +48,6 @@
   "dependencies": {
     "ethereumjs-util": "5.2.0",
     "penpal": "3.0.7",
-    "pocket-js-core": "0.0.3",
     "web3-provider-engine": "16.0.1"
   },
   "husky": {
