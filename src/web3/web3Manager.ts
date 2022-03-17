@@ -173,12 +173,6 @@ export default class Web3Manager {
           const { error, result } = await widgetCommunication.signMessage(params, this.config);
           cb(error, result);
         },
-        signTypedMessageV3: async (msgParams: any, cb: ProviderCallback) => {
-          const widgetCommunication = await this._getWidgetCommunication();
-          const params = { ...msgParams, messageStandard: 'signTypedMessageV3' };
-          const { error, result } = await widgetCommunication.signMessage(params, this.config);
-          cb(error, result);
-        },
         estimateGas: async (txParams: any, cb: ProviderCallback) => {
           const gas = await getTxGas(query, txParams);
           cb(null, gas);
